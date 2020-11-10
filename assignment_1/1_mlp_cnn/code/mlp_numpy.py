@@ -30,22 +30,26 @@ class MLP(object):
                      This number is required in order to specify the
                      output dimensions of the MLP
 
-        TODO:
-        Implement initialization of the network.
         """
 
         ########################
         # PUT YOUR CODE HERE  #
         #######################
         self.net = []
-        first = True
-        for i, layer_size in enumerate(n_hidden):
-          if i == 0: 
+        for layer_size in n_hidden:
             self.net.append(LinearModule(n_inputs, layer_size))
-          else:
             self.net.append(ELUModule())
-            self.net.append(LinearModule(n_hidden[i-1], layer_size))
+            n_inputs = layer_size
+        self.net.append(LinearModule(n_inputs, n_classes))
         self.net.append(SoftMaxModule())
+
+        # self.net = []
+        # prev_layer = n_inputs
+        # for i, layer_size in enumerate(n_hidden):
+        #     self.net.append(LinearModule(prev_layer, layer_size))
+        #     prev_layer = layer_size
+        #     self.net.append(ELUModule())
+        # self.net.append(SoftMaxModule())
 
         ########################
         # END OF YOUR CODE    #
@@ -61,8 +65,6 @@ class MLP(object):
         Returns:
           out: outputs of the network
 
-        TODO:
-        Implement forward pass of the network.
         """
 
         ########################
@@ -84,17 +86,24 @@ class MLP(object):
         Args:
           dout: gradients of the loss
 
-        TODO:
-        Implement backward pass of the network.
         """
 
         ########################
         # PUT YOUR CODE HERE  #
         #######################
-        for layer in self.net[::s-1]:
+        for layer in self.net[::-1]:
           dout = layer.backward(dout)
         ########################
         # END OF YOUR CODE    #
         #######################
 
         return
+    
+    def update(self, learning_rate):
+      for lin_layer in self.net[::2]:
+        # print(lin_layer.params['weight'].shape)
+        # print(np.mean(lin_layer.grads['bias'], axis=0).shape)
+        lin_layer.params['weight'] = lin_layer.params['weight'] - (lin_layer.grads['weight'] * learning_rate)
+        lin_layer.params['bias'] = lin_layer.params['bias'] - (lin_layer.grads['bias'] * learning_rate)
+        # print(lin_layer.params['weight'].shape)
+        # print(lin_layer.params['bias'].shape)

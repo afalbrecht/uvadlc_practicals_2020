@@ -92,7 +92,8 @@ class LinearModule(object):
 
         dx = dout @ self.params['weight']
         self.grads['weight'] = dout.T @ self.x_values
-        self.grads['bias'] = dout
+        self.grads['bias'] = np.mean(dout, axis=0).reshape(1, dout.shape[1])  
+        # self.grads['bias'] = dout
         
         ########################
         # END OF YOUR CODE    #
@@ -127,7 +128,8 @@ class SoftMaxModule(object):
         
         self.x_values = x
         y = np.exp(x - x.max())
-        out = y / y.sum(axis=1, keepdims=True)
+        sum_y = np.sum(y, axis=1, keepdims=True)
+        out = y / sum_y
         self.y_values = out
         ########################
         # END OF YOUR CODE    #
@@ -170,7 +172,7 @@ class SoftMaxModule(object):
         # print('2', rest2.shape)
         dx = diag - rest
         dx = np.einsum('ijk,ik->ij', dx, dout)
-        print(dx.shape)
+        #print(dx.shape)
 
         '''TODO: Recheck backwards pass '''
 
@@ -205,10 +207,16 @@ class CrossEntropyModule(object):
         # print('y, x:', y.shape, x.shape)
         # print('dot vector:', np.dot(y.T, x).shape)
         # print('dot scalar:', np.dot(y[0], x[0]).shape)
+        # print('y:', y.shape)
+        # print(y[:3])
+        # print('x:', x.shape)
+        # print(x[:3])
+        x = np.maximum(x, 10**-9)
         out = -np.mean(np.sum(y * np.log(x), axis=1))
         # print("cross entropy out:", out.shape)
         # out = - 1/s*np.sum(np.dot(y.T, np.log(x)))
         # print("cross entropy sum out:", out.shape)
+        
         
         ########################
         # END OF YOUR CODE    #
@@ -231,6 +239,7 @@ class CrossEntropyModule(object):
         # PUT YOUR CODE HERE  #
         #######################
         s = x.shape[0]
+        x = np.maximum(x, 10**-9)
         dx = -1/s * y/x
         
         ########################

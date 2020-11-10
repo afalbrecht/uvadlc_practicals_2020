@@ -12,6 +12,7 @@ import os
 from mlp_numpy import MLP
 from modules import CrossEntropyModule
 import cifar10_utils
+import matplotlib.pyplot as plt
 
 # Default constants
 DNN_HIDDEN_UNITS_DEFAULT = '100'
@@ -40,8 +41,6 @@ def accuracy(predictions, targets):
       accuracy: scalar float, the accuracy of predictions,
                 i.e. the average correct predictions over the whole batch
 
-    TODO:
-    Implement accuracy computation.
     """
 
     ########################
@@ -50,8 +49,7 @@ def accuracy(predictions, targets):
 
     argpred = np.argmax(predictions, axis=1)
     arghot = np.argmax(targets, axis=1)
-    accuracy = len(argarr[argpred == arghot])/len(predictions)
-    print(accuracy)
+    accuracy = len(argpred[argpred == arghot])/len(predictions)
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -88,14 +86,46 @@ def train():
     BATCH_SIZE_DEFAULT = 200
     EVAL_FREQ_DEFAULT = 100
 
-    data = get_cifar10()
+    data = cifar10_utils.get_cifar10(data_dir=FLAGS.data_dir)
     train = data['train']
     test = data['test']
-    
-    loss_history = []
-    accuracy_history = []
-    mlp = MLP(_, dnn_hidden_units, _)
+    n_inputs = train.images[0].flatten().shape[0]
+    n_classes = train.labels[0].shape[0]
 
+    mlp = MLP(n_inputs, dnn_hidden_units, n_classes)
+    loss_mod = CrossEntropyModule()
+
+    loss_history = []
+    acc_history = []
+    for epoch in range(FLAGS.max_steps): #FLAGS.max_steps
+        x, y = train.next_batch(FLAGS.batch_size)
+        x = x.reshape(x.shape[0], n_inputs)
+        out = mlp.forward(x)
+        loss = loss_mod.forward(out, y)
+        loss_history.append(loss)
+        # if not np.isnan(loss):
+        #     print(loss)
+        dout = loss_mod.backward(out, y)
+        # print(dout[:5])
+        mlp.backward(dout)
+        mlp.update(FLAGS.learning_rate)
+        if epoch % FLAGS.eval_freq == 0:
+            x, y = test.images, test.labels
+            x = x.reshape(x.shape[0], n_inputs)
+            test_out = mlp.forward(x)
+            acc = accuracy(test_out, y)
+            print('Accuracy:', acc)
+            acc_history.append(acc)
+    print('Final loss:', loss_history[-1])
+    print('Final acc:', acc_history[-1])
+
+    plt.plot(acc_history)
+    plt.plot(loss_history)
+    plt.legend(['accuracy', 'loss'])
+    plt.show()
+
+    #TODO: fix plot
+    
     ########################
     # END OF YOUR CODE    #
     #######################
