@@ -47,7 +47,11 @@ def accuracy(predictions, targets):
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    raise NotImplementedError
+
+    argpred = np.argmax(predictions, axis=1)
+    arghot = np.argmax(targets, axis=1)
+    accuracy = len(argarr[argpred == arghot])/len(predictions)
+    print(accuracy)
     ########################
     # END OF YOUR CODE    #
     #######################
@@ -78,7 +82,20 @@ def train():
     ########################
     # PUT YOUR CODE HERE  #
     #######################
-    raise NotImplementedError
+    DNN_HIDDEN_UNITS_DEFAULT = '100'
+    LEARNING_RATE_DEFAULT = 1e-3
+    MAX_STEPS_DEFAULT = 1400
+    BATCH_SIZE_DEFAULT = 200
+    EVAL_FREQ_DEFAULT = 100
+
+    data = get_cifar10()
+    train = data['train']
+    test = data['test']
+    
+    loss_history = []
+    accuracy_history = []
+    mlp = MLP(_, dnn_hidden_units, _)
+
     ########################
     # END OF YOUR CODE    #
     #######################

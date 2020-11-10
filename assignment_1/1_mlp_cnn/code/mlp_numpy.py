@@ -37,7 +37,16 @@ class MLP(object):
         ########################
         # PUT YOUR CODE HERE  #
         #######################
-        raise NotImplementedError
+        self.net = []
+        first = True
+        for i, layer_size in enumerate(n_hidden):
+          if i == 0: 
+            self.net.append(LinearModule(n_inputs, layer_size))
+          else:
+            self.net.append(ELUModule())
+            self.net.append(LinearModule(n_hidden[i-1], layer_size))
+        self.net.append(SoftMaxModule())
+
         ########################
         # END OF YOUR CODE    #
         #######################
@@ -59,7 +68,9 @@ class MLP(object):
         ########################
         # PUT YOUR CODE HERE  #
         #######################
-        raise NotImplementedError
+        for layer in self.net:
+          x = layer.forward(x)
+        out = x
         ########################
         # END OF YOUR CODE    #
         #######################
@@ -80,7 +91,8 @@ class MLP(object):
         ########################
         # PUT YOUR CODE HERE  #
         #######################
-        raise NotImplementedError
+        for layer in self.net[::s-1]:
+          dout = layer.backward(dout)
         ########################
         # END OF YOUR CODE    #
         #######################
