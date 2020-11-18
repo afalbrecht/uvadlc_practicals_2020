@@ -8,6 +8,11 @@ from __future__ import print_function
 
 import torch.nn as nn
 
+def init_weights(layer, std=0.0001):
+  if type(layer) == nn.Linear:
+    layer.weight.data.normal_(std=std)
+    layer.bias.data.fill_(0.0)
+
 
 class MLP(nn.Module):
     """
@@ -29,18 +34,20 @@ class MLP(nn.Module):
           n_classes: number of classes of the classification problem.
                      This number is required in order to specify the
                      output dimensions of the MLP
-    
-        TODO:
-        Implement initialization of the network.
+
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
-        raise NotImplementedError
-        ########################
-        # END OF YOUR CODE    #
-        #######################
+
+        super().__init__()
+        self.layers = nn.ModuleList()
+        for layer_size in n_hidden:
+            self.layers.append(nn.Linear(n_inputs, layer_size))
+            self.layers.append(nn.Tanh())
+            n_inputs = layer_size
+        self.layers.append(nn.Linear(n_inputs, n_classes))
+
+        self.layers.apply(init_weights)
+
+
     
     def forward(self, x):
         """
@@ -52,16 +59,10 @@ class MLP(nn.Module):
         Returns:
           out: outputs of the network
         
-        TODO:
-        Implement forward pass of the network.
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
-        raise NotImplementedError
-        ########################
-        # END OF YOUR CODE    #
-        #######################
-        
+
+        for layer in self.layers:
+          x = layer(x)
+        out = x
+
         return out

@@ -35,15 +35,10 @@ class CustomLayerNormAutograd(nn.Module):
         """
         super(CustomLayerNormAutograd, self).__init__()
         
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
-        
-        raise NotImplementedError
-        
-        ########################
-        # END OF YOUR CODE    #
-        #######################
+        self.gamma = nn.Parameter(torch.ones(n_neurons))
+        self.beta = nn.Parameter(torch.zeros(n_neurons))
+        self.n_neurons = n_neurons
+        self.eps = eps
     
     def forward(self, input):
         """
@@ -60,15 +55,19 @@ class CustomLayerNormAutograd(nn.Module):
           For the case that you make use of torch.var be aware that the flag unbiased=False should be set.
         """
         
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
+        if input.size(1) != self.n_neurons:
+          raise Exception(f'Given layer size {input.size[1]} is not equal to expected layer size {self.n_neurons}')
 
-        raise NotImplementedError
-
-        ########################
-        # END OF YOUR CODE    #
-        #######################
+        mean = torch.mean(input, axis=1)
+        var1 = torch.var(input, dim=1, unbiased=False)
+        # var2 = torch.mean((input - mean.view(-1, 1))**2, axis=1)
+        print('mean', mean)
+        print('vars:', var1)
+        norm_input = (input - mean.view(-1, 1)) / torch.sqrt(var1.view(-1, 1)  + self.eps)
+        out = norm_input
+        print('normed:', norm_input)
+        out = self.gamma * norm_input + self.beta
+        print('out', out)
         
         return out
 

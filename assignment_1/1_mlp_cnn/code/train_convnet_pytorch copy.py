@@ -16,6 +16,9 @@ import cifar10_utils
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import torchvision
+from torchvision import models, transforms
+from skimage.transform import resize
 
 # Default constants
 LEARNING_RATE_DEFAULT = 1e-4
@@ -23,6 +26,7 @@ BATCH_SIZE_DEFAULT = 32
 MAX_STEPS_DEFAULT = 5000
 EVAL_FREQ_DEFAULT = 500
 OPTIMIZER_DEFAULT = 'ADAM'
+MODEL_DEFAULT = 'STANDARD'
 
 # Directory in which cifar data is saved
 DATA_DIR_DEFAULT = './cifar10/cifar-10-batches-py'
@@ -81,21 +85,45 @@ def train():
     n_channels = train.images[0].shape[0]
     n_classes = train.labels[0].shape[0]
 
-    model = ConvNet(n_channels, n_classes)
-    loss_mod = nn.CrossEntropyLoss()
-    optimizer = torch.optim.AdamW(model.parameters(), lr=FLAGS.learning_rate)
+    print(train.images.shape)
+
+    # transform = transforms.Compose(
+    #     [transforms.Resize((224, 224)),
+    #      transforms.ToTensor(),
+    #      transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+
+
+    if FLAGS.model == 'ALEX':
+        train.images = torch.Tensor([resize(img) for img in train.images])
+        test.images = torch.Tensor([resize(img) for img in test.images])
+        print('doneee')
+        model = models.alexnet(pretrained=True)
+        torch.save(model.state_dict(), 'alexnet.txt')
+
+        # model = torch.load('alexnet.txt')
+
+        for param in model.features.parameters():
+            param.requires_grad = False
+        
+        loss_mod = nn.CrossEntropyLoss()
+        optimizer = torch.optim.AdamW(model.classifier.parameters(), lr=FLAGS.learning_rate)
+    else:
+        model = ConvNet(n_channels, n_classes)
+        loss_mod = nn.CrossEntropyLoss()
+        optimizer = torch.optim.AdamW(model.parameters(), lr=FLAGS.learning_rate)
 
     model.to(device)
 
     loss_history = []
     acc_history = []
-    for step in range(FLAGS.max_steps): #FLAGS.max_steps
+    for step in range(2): #FLAGS.max_steps
         model.train()
         x, y = train.next_batch(FLAGS.batch_size)
         x = torch.from_numpy(x).to(device)
         y = torch.from_numpy(np.argmax(y, axis=1)).to(device) # converts onehot to dense
 
-        # out = model.forward(x)
+        if FLAGS.model == 'ADAM': x = resizer(x)
+
         out = model(x)
         loss = loss_mod(out, y)
         loss_history.append(loss)
@@ -112,6 +140,7 @@ def train():
                 for i in range(0, x.shape[0], test_step):
                     batch_x = x[i:i+test_step].to(device)
                     batch_y = y[i:i+test_step].to(device)
+                    if FLAGS.model == 'ADAM': batch_x = resizer(batch_x)
                     test_out = model.forward(batch_x)
                     acc += accuracy(test_out, batch_y)/20
                 print('Accuracy:', acc)
@@ -123,12 +152,12 @@ def train():
     plt.step(range(0, FLAGS.max_steps+1, FLAGS.eval_freq), acc_history) # range(0, FLAGS.max_steps, FLAGS.eval_freq)
     plt.legend(['loss', 'accuracy'])
     # plt.show()
-    plt.savefig('/home/lgpu0376/code/output_dir/loss_acc_graph.png')
+    # plt.savefig('/home/lgpu0376/code/output_dir/loss_acc_graph.png')
     # plt.savefig('loss_acc_graph.png')
 
-    with open('/home/lgpu0376/code/output_dir/output.out', 'w+') as f:
-        f.write(f'Final loss: {loss_history[-1]}')  
-        f.write(f'\nFinal acc: {acc_history[-1]}')
+    # with open('/home/lgpu0376/code/output_dir/output.out', 'w+') as f:
+    #     f.write(f'Final loss: {loss_history[-1]}')  
+    #     f.write(f'\nFinal acc: {acc_history[-1]}')
 
 
 
@@ -167,6 +196,8 @@ if __name__ == '__main__':
                         help='Frequency of evaluation on the test set')
     parser.add_argument('--data_dir', type=str, default=DATA_DIR_DEFAULT,
                         help='Directory for storing input data')
+    parser.add_argument('--model', type=str, default=MODEL_DEFAULT,
+                        help='Model with choice between standard and AlexNet')
     FLAGS, unparsed = parser.parse_known_args()
     
     main()

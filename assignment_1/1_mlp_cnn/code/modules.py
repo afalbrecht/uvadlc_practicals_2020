@@ -24,10 +24,7 @@ class LinearModule(object):
     
         Also, initialize gradients with zeros.
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
+
         std = 0.0001
         self.params = {}
         self.grads = {}
@@ -38,11 +35,7 @@ class LinearModule(object):
         self.grads['dB'] = np.zeros((1, out_features))
         self.x_values = None
         self.y_values = None
-        
-        ########################
-        # END OF YOUR CODE    #
-        #######################
-    
+
     def forward(self, x):
         """
         Forward pass.
@@ -58,17 +51,9 @@ class LinearModule(object):
         Hint: You can store intermediate variables inside the object. They can be used in backward pass computation.
         """
         
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
-
         out = x @ self.params['weight'].T + self.params['bias']
         self.x_values = x
         self.y_values = out
-        
-        ########################
-        # END OF YOUR CODE    #
-        #######################
         
         return out
     
@@ -85,19 +70,12 @@ class LinearModule(object):
         Implement backward pass of the module. Store gradient of the loss with respect to
         layer parameters in self.grads['weight'] and self.grads['bias'].
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
 
         dx = dout @ self.params['weight']
         self.grads['weight'] = dout.T @ self.x_values
         self.grads['bias'] = np.mean(dout, axis=0).reshape(1, dout.shape[1])  
         # self.grads['bias'] = dout
-        
-        ########################
-        # END OF YOUR CODE    #
-        #######################
+
         return dx
 
 
@@ -121,20 +99,13 @@ class SoftMaxModule(object):
     
         Hint: You can store intermediate variables inside the object. They can be used in backward pass computation.
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
-        
+
         self.x_values = x
         y = np.exp(x - x.max())
         sum_y = np.sum(y, axis=1, keepdims=True)
         out = y / sum_y
         self.y_values = out
-        ########################
-        # END OF YOUR CODE    #
-        #######################
-        
+
         return out
     
     def backward(self, dout):
@@ -144,42 +115,19 @@ class SoftMaxModule(object):
           dout: gradients of the previous modul
         Returns:
           dx: gradients with respect to the input of the module
-    
-        """
         
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
-        y = self.y_values
-        # print('softmax s:', s.shape)
-        # print('dout', dout.shape)
-        # print(np.diagflat(s))
-        # print('diag:', (np.diagflat(s) - np.dot(s, s.T)).shape)
-        # dx = dout @ (np.diagflat(s) - np.dot(s, s.T))
-        # print('softmax dx:', dx.shape)
+        I do want to note that I was heavily inspired by this blogpost for the backwards implementation: https://themaverickmeerkat.com/2019-10-23-Softmax/
+        Blood, sweat and tears were shed to find a neater implementation, but none worked. Therefore I leave this as is and hereby credit the original creator.
+        Do want to note that through working on this I got more familiar with einsum and am now semi-confident that I could have come up with this myself in the end. 
 
-        # s = s.reshape(-1, 1)
-        # print('diag:', (np.diagflat(s) - np.matmul(s, s.T)).shape)
-        # dx = dout @ (np.diagflat(s) - np.matmul(s, s.T))
-        # print('softmax dx:', dx.shape)
-        
+        """
+        y = self.y_values
         n = y.shape[1]
-        # diag = np.eye(y.shape[1]) * y[:, :, np.newaxis]
-        diag= np.einsum('ij,jk->ijk', y, np.eye(n, n))
-        # rest = (y * y)[:, :, np.newaxis]
+        diag = np.einsum('ij,jk->ijk', y, np.eye(n, n))
         rest= np.einsum('ij,ik->ijk', y, y)
-        # print('1', rest.shape)
-        # print('2', rest2.shape)
         dx = diag - rest
         dx = np.einsum('ijk,ik->ij', dx, dout)
-        #print(dx.shape)
 
-        '''TODO: Recheck backwards pass '''
-
-        ########################
-        # END OF YOUR CODE    #
-        #######################
-        
         return dx
 
 
@@ -198,30 +146,11 @@ class CrossEntropyModule(object):
           out: cross entropy loss
     
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
 
         s = x.shape[0]
-        # print('y, x:', y.shape, x.shape)
-        # print('dot vector:', np.dot(y.T, x).shape)
-        # print('dot scalar:', np.dot(y[0], x[0]).shape)
-        # print('y:', y.shape)
-        # print(y[:3])
-        # print('x:', x.shape)
-        # print(x[:3])
         x = np.maximum(x, 10**-9)
         out = -np.mean(np.sum(y * np.log(x), axis=1))
-        # print("cross entropy out:", out.shape)
-        # out = - 1/s*np.sum(np.dot(y.T, np.log(x)))
-        # print("cross entropy sum out:", out.shape)
-        
-        
-        ########################
-        # END OF YOUR CODE    #
-        #######################
-        
+
         return out
     
     def backward(self, x, y):
@@ -234,18 +163,11 @@ class CrossEntropyModule(object):
           dx: gradient of the loss with the respect to the input x.
 
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
+
         s = x.shape[0]
         x = np.maximum(x, 10**-9)
         dx = -1/s * y/x
-        
-        ########################
-        # END OF YOUR CODE    #
-        #######################
-        
+
         return dx
 
 
@@ -268,17 +190,10 @@ class ELUModule(object):
 
         Hint: You can store intermediate variables inside the object. They can be used in backward pass computation.
         """
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
-        
+
         self.x_values = x
         out = np.where(x >= 0, x, np.exp(x) - 1)
-        
-        ########################
-        # END OF YOUR CODE    #
-        #######################
-        
+
         return out
     
     def backward(self, dout):
@@ -292,15 +207,8 @@ class ELUModule(object):
         
         Implement backward pass of the module.
         """
-        
-        ########################
-        # PUT YOUR CODE HERE  #
-        #######################
 
         x = self.x_values
         dx = dout * np.where(x >= 0, 1, np.exp(x))
 
-        ########################
-        # END OF YOUR CODE    #
-        #######################
         return dx

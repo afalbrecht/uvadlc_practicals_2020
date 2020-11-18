@@ -43,16 +43,9 @@ def accuracy(predictions, targets):
 
     """
 
-    ########################
-    # PUT YOUR CODE HERE  #
-    #######################
-
     argpred = np.argmax(predictions, axis=1)
     arghot = np.argmax(targets, axis=1)
     accuracy = len(argpred[argpred == arghot])/len(predictions)
-    ########################
-    # END OF YOUR CODE    #
-    #######################
 
     return accuracy
 
@@ -60,9 +53,6 @@ def accuracy(predictions, targets):
 def train():
     """
     Performs training and evaluation of MLP model.
-
-    TODO:
-    Implement training and evaluation of MLP model. Evaluate your model on the whole test set each eval_freq iterations.
     """
 
     ### DO NOT CHANGE SEEDS!
@@ -77,15 +67,6 @@ def train():
     else:
         dnn_hidden_units = []
 
-    ########################
-    # PUT YOUR CODE HERE  #
-    #######################
-    DNN_HIDDEN_UNITS_DEFAULT = '100'
-    LEARNING_RATE_DEFAULT = 1e-3
-    MAX_STEPS_DEFAULT = 1400
-    BATCH_SIZE_DEFAULT = 200
-    EVAL_FREQ_DEFAULT = 100
-
     data = cifar10_utils.get_cifar10(data_dir=FLAGS.data_dir)
     train = data['train']
     test = data['test']
@@ -97,19 +78,16 @@ def train():
 
     loss_history = []
     acc_history = []
-    for epoch in range(FLAGS.max_steps): #FLAGS.max_steps
+    for step in range(FLAGS.max_steps): #FLAGS.max_steps
         x, y = train.next_batch(FLAGS.batch_size)
         x = x.reshape(x.shape[0], n_inputs)
         out = mlp.forward(x)
         loss = loss_mod.forward(out, y)
         loss_history.append(loss)
-        # if not np.isnan(loss):
-        #     print(loss)
         dout = loss_mod.backward(out, y)
-        # print(dout[:5])
         mlp.backward(dout)
         mlp.update(FLAGS.learning_rate)
-        if epoch % FLAGS.eval_freq == 0:
+        if step == 0 or (step + 1) % FLAGS.eval_freq == 0:
             x, y = test.images, test.labels
             x = x.reshape(x.shape[0], n_inputs)
             test_out = mlp.forward(x)
@@ -118,17 +96,12 @@ def train():
             acc_history.append(acc)
     print('Final loss:', loss_history[-1])
     print('Final acc:', acc_history[-1])
+    print(len(acc_history))
 
-    plt.plot(acc_history)
     plt.plot(loss_history)
-    plt.legend(['accuracy', 'loss'])
+    plt.step(range(0, FLAGS.max_steps + 1, FLAGS.eval_freq), acc_history)
+    plt.legend(['loss', 'accuracy'])
     plt.show()
-
-    #TODO: fix plot
-    
-    ########################
-    # END OF YOUR CODE    #
-    #######################
 
 
 def print_flags():
