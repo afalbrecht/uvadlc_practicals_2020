@@ -63,8 +63,8 @@ class TextGenerationModel(nn.Module):
                 nn.init.zeros_(param)
     
     def init_state(self):
-        return (torch.zeros(self.num_layers, self.batch_size, self.num_hidden),
-                torch.zeros(self.num_layers, self.batch_size, self.num_hidden))
+        return (torch.zeros(self.num_layers, self.batch_size, self.num_hidden).to(device),
+                torch.zeros(self.num_layers, self.batch_size, self.num_hidden).to(device))
 
     # def forward(self, x, prev_state):
     #     # print(x.size())
