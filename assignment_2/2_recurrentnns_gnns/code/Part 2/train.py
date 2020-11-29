@@ -171,15 +171,8 @@ def train(config, seed=0):
 ###############################################################################
 
 def draw_plot(acc, loss, seq_length):
-    mean = np.mean(loss, axis=0)
-    std = np.std(loss, axis=0)
-    plt.plot(mean)
-    plt.fill_between(range(len(mean)), mean - std, mean + std, alpha=0.2)
-
-    mean_acc = np.mean(acc, axis=0)
-    std_acc = np.std(acc, axis=0)
-    plt.plot(mean_acc)
-    plt.fill_between(range(len(mean_acc)), mean_acc - std_acc, mean_acc + std_acc, alpha=0.2)
+    plt.plot(loss)
+    plt.plot(acc)
     plt.legend(['loss', 'accuracy'])
     # plt.show()
     plt.savefig(f'/home/lgpu0376/code/output_dir/loss_acc_kant_{seq_length}.png')
@@ -188,10 +181,9 @@ def draw_plot(acc, loss, seq_length):
     plt.clf()
 
     with open('/home/lgpu0376/code/output_dir/output_kant.out', 'a+') as f:
-        f.write(f'\nFinal loss for seq_length {seq_length}: {mean[-1]}')  
-        f.write(f'\nFinal acc for seq_length {seq_length}: {mean_acc[-1]}')
-        f.write(f'\nFinal loss std for seq_length {seq_length}: {np.mean(std)}')  
-        f.write(f'\nFinal acc std for seq_length {seq_length}: {np.mean(std_acc)}')
+        f.write(f'\nFinal loss for seq_length: {loss[-1]}')  
+        f.write(f'\nFinal acc for seq_length: {acc[-1]}')
+
 
 
 if __name__ == "__main__":
