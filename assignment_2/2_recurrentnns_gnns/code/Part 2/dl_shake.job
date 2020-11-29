@@ -22,4 +22,4 @@ cd "$HOME/uvadlc_practicals_2020/assignment_2/2_recurrentnns_gnns/code/Part 2"
 # Activate your environment
 source activate dl2020
 # Run your code
-srun python -u train.py --txt_file="assets/book_EN_shakespeare_complete.txt"
+srun python -u train.py --txt_file="assets/book_EN_critique_of_pure_reason.txt"
