@@ -27,6 +27,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import torch.nn as nn
 
 from dataset import TextDataset
 from model import TextGenerationModel
@@ -34,33 +35,104 @@ from model import TextGenerationModel
 ###############################################################################
 
 
-def train(config):
+def train(config, seed=0):
+
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
     # Initialize the device which to run the model on
     device = torch.device(config.device)
+    print(device)
 
     # Initialize the dataset and data loader (note the +1)
-    dataset = TextDataset(...)  # fixme
+    dataset = TextDataset(config.txt_file, config.seq_length)
     data_loader = DataLoader(dataset, config.batch_size)
 
     # Initialize the model that we are going to use
-    model = TextGenerationModel(...)  # FIXME
+    model = TextGenerationModel(
+        config.batch_size, config.seq_length, 
+        dataset.vocab_size, config.lstm_num_hidden,
+        config.lstm_num_layers, config.device
+    ).to(device)
 
     # Setup the loss and optimizer
-    criterion = None  # FIXME
-    optimizer = None  # FIXME
+    criterion = nn.NLLLoss()
+    optimizer = optim.AdamW(model.parameters(), lr=config.learning_rate)
+
+    loss_history = []
+    acc_history = []
+    # state = model.init_state()
 
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
+
+        # print(batch_inputs)
+        # print(len(batch_inputs))
 
         # Only for time measurement of step through network
         t1 = time.time()
 
-        #######################################################
-        # Add more code here ...
-        #######################################################
+        # Move to GPU
+        batch_inputs = torch.Tensor(torch.cat([x.float().unsqueeze(dim=0) for x in batch_inputs])).long().to(device)
+        batch_targets = torch.Tensor(torch.cat([y.float().unsqueeze(dim=0) for y in batch_targets])).long().to(device)
+        # batch_inputs = torch.cat(batch_inputs).long().to(device)
+        # batch_targets = torch.cat(batch_targets).long().to(device)
 
-        loss = np.inf   # fixme
-        accuracy = 0.0  # fixme
+        # print(batch_inputs)
+        # print(batch_inputs.size())
+
+        # Reset for next iteration
+        model.zero_grad()
+
+        # Forward pass
+        # log_probs, state = model(batch_inputs, state)
+        log_probs = model(batch_inputs)
+        
+        # print('log_probs:', log_probs.size())
+        # print(batch_targets.size())
+        # print('log_probs:', log_probs.transpose(0, 1).size())
+
+        # one_hot = nn.functional.one_hot(batch_targets, dataset.vocab_size)
+
+        # loss_list = torch.Tensor([criterion(char, target) for char, target in zip(log_probs, batch_targets)])
+        loss = criterion(log_probs.transpose(1, 2), batch_targets)
+        loss.backward()
+        # print(log_probs.size())
+        # print(loss_list[0])
+        # print(type(loss_list[0]))
+        # loss = torch.mean(loss_list)
+        # loss_list = []
+        # for char, target in zip(log_probs, batch_targets):
+        #     loss = criterion(char, target)
+        #     loss.backward()
+        #     loss_list.append(loss.item())
+        # loss = np.mean(loss_list)
+
+        torch.nn.utils.clip_grad_norm_(model.parameters(),
+                                       max_norm=config.max_norm)
+        
+        optimizer.step()
+
+        predictions = torch.argmax(log_probs, dim=-1)    # FIXME
+        correct = (predictions == batch_targets).sum().item()
+        accuracy = correct / (log_probs.size(1) * log_probs.size(0))
+
+        # predictions = torch.argmax(log_probs, dim=-1)    # FIXME
+        # correct = (predictions == batch_targets).sum().item()
+        # accuracy = correct / log_probs.size(1)
+
+
+        loss_history.append(loss.item())
+        acc_history.append(accuracy)
+
+        # if step % 2e4 == 0:
+        #     print('\nLoss:', loss.item())
+        #     print('Acc:', accuracy)
 
         # Just for time measurement
         t2 = time.time()
@@ -87,10 +159,36 @@ def train(config):
             break
 
     print('Done training.')
-
+    print('Final loss:', loss_history[-1])
+    print('Final acc:', acc_history[-1])
+    return loss_history, acc_history
 
 ###############################################################################
 ###############################################################################
+
+def draw_plot(acc, loss, seq_length):
+    mean = np.mean(loss, axis=0)
+    std = np.std(loss, axis=0)
+    plt.plot(mean)
+    plt.fill_between(range(len(mean)), mean - std, mean + std, alpha=0.2)
+
+    mean_acc = np.mean(acc, axis=0)
+    std_acc = np.std(acc, axis=0)
+    plt.plot(mean_acc)
+    plt.fill_between(range(len(mean_acc)), mean_acc - std_acc, mean_acc + std_acc, alpha=0.2)
+    plt.legend(['loss', 'accuracy'])
+    # plt.show()
+    plt.savefig(f'/home/lgpu0376/code/output_dir/loss_acc_shakespeare_{seq_length}.png')
+    # plt.savefig(f'loss_acc_{model}_{seq_length}.png')
+
+    plt.clf()
+
+    with open('/home/lgpu0376/code/output_dir/output_shakespeare.out', 'a+') as f:
+        f.write(f'\nFinal loss for seq_length {seq_length}: {mean[-1]}')  
+        f.write(f'\nFinal acc for seq_length {seq_length}: {mean_acc[-1]}')
+        f.write(f'\nFinal loss std for seq_length {seq_length}: {np.mean(std)}')  
+        f.write(f'\nFinal acc std for seq_length {seq_length}: {np.mean(std_acc)}')
+
 
 if __name__ == "__main__":
 
@@ -98,9 +196,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Model params
-    parser.add_argument('--txt_file', type=str, required=True,
+    parser.add_argument('--txt_file', type=str, required=False, #TODO: required=True
+                        default="Part 2/assets/book_EN_shakespeare_complete.txt",
                         help="Path to a .txt file to train on")
-    parser.add_argument('--seq_length', type=int, default=30,
+    parser.add_argument('--seq_length', type=int, default=30,   #TODO: 30
                         help='Length of an input sequence')
     parser.add_argument('--lstm_num_hidden', type=int, default=128,
                         help='Number of hidden units in the LSTM')
@@ -129,7 +228,7 @@ if __name__ == "__main__":
     # Misc params
     parser.add_argument('--summary_path', type=str, default="./summaries/",
                         help='Output path for summaries')
-    parser.add_argument('--print_every', type=int, default=5,
+    parser.add_argument('--print_every', type=int, default=50,
                         help='How often to print training progress')
     parser.add_argument('--sample_every', type=int, default=100,
                         help='How often to sample from the model')
@@ -141,4 +240,5 @@ if __name__ == "__main__":
     config = parser.parse_args()
 
     # Train the model
-    train(config)
+    loss, acc = train(config)
+    draw_plot(acc, loss, config.seq_length)

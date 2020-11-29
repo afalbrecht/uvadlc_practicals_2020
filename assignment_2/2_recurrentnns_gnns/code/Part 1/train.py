@@ -35,18 +35,33 @@ from lstm import LSTM
 from gru import GRU
 from peep_lstm import peepLSTM
 
+from tqdm import tqdm
+
 import numpy as np
+import matplotlib.pyplot as plt
 
 # You may want to look into tensorboardX for logging
-# from tensorboardX import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 
 ###############################################################################
 
 
-def train(config):
-    np.random.seed(0)
-    torch.manual_seed(0)
 
+def train(config, seed=0, seq_length=0):
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    if seq_length != 0:
+        config.input_length = seq_length
+
+    # Initialize tensorboard writer
+    # writer = SummaryWriter()
 
     # Initialize the device which to run the model on
     device = torch.device(config.device)
@@ -121,6 +136,9 @@ def train(config):
     loss_function = torch.nn.NLLLoss()
     optimizer = optim.Adam(model.parameters(), lr=config.learning_rate)
 
+    loss_history = []
+    acc_history = []
+
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
 
         # Only for time measurement of step through network
@@ -135,6 +153,8 @@ def train(config):
 
         # Forward pass
         log_probs = model(batch_inputs)
+        print('log', log_probs.size())
+        print('batch', batch_targets.size)
 
         # Compute the loss, gradients and update network parameters
         loss = loss_function(log_probs, batch_targets)
@@ -152,6 +172,15 @@ def train(config):
         predictions = torch.argmax(log_probs, dim=1)
         correct = (predictions == batch_targets).sum().item()
         accuracy = correct / log_probs.size(0)
+
+        loss_history.append(loss.item())
+        acc_history.append(accuracy)
+
+        if step % 200 == 0:
+            print('\nLoss:', loss.item())
+            print('Acc:', accuracy)
+        # writer.add_scalar("Loss", loss, step)
+        # writer.add_scalar("Accuracy", accuracy, step)
 
         # print(predictions[0, ...], batch_targets[0, ...])
 
@@ -174,10 +203,40 @@ def train(config):
             # If you receive a PyTorch data-loader error, check this bug report
             # https://github.com/pytorch/pytorch/pull/9655
             break
+    
+    
+    # writer.flush()
+    # writer.close()
+    print(f'Done training with seed {seed} and seq_length {seq_length}')
+    print('Final loss:', loss_history[-1])
+    print('Final acc:', acc_history[-1])
+    return loss_history, acc_history
+    ###########################################################################
+    ###########################################################################
 
-    print('Done training.')
-    ###########################################################################
-    ###########################################################################
+def draw_plot(acc, loss, seq_length, model):
+    mean = np.mean(loss, axis=0)
+    std = np.std(loss, axis=0)
+    plt.plot(mean)
+    plt.fill_between(range(len(mean)), mean - std, mean + std, alpha=0.2)
+
+    mean_acc = np.mean(acc, axis=0)
+    std_acc = np.std(acc, axis=0)
+    plt.plot(mean_acc)
+    plt.fill_between(range(len(mean_acc)), mean_acc - std_acc, mean_acc + std_acc, alpha=0.2)
+    plt.legend(['loss', 'accuracy'])
+    # plt.show()
+    plt.savefig(f'/home/lgpu0376/code/output_dir/loss_acc_{model}_{seq_length}.png')
+    # plt.savefig(f'loss_acc_{model}_{seq_length}.png')
+
+    plt.clf()
+
+    with open('/home/lgpu0376/code/output_dir/output_LSTM.out', 'a+') as f:
+        f.write(f'\nFinal loss for seq_length {seq_length}: {mean[-1]}')  
+        f.write(f'\nFinal acc for seq_length {seq_length}: {mean_acc[-1]}')
+        f.write(f'\nFinal loss std for seq_length {seq_length}: {np.mean(std)}')  
+        f.write(f'\nFinal acc std for seq_length {seq_length}: {np.mean(std_acc)}')
+
 
 
 if __name__ == "__main__":
@@ -186,11 +245,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # dataset
-    parser.add_argument('--dataset', type=str, default='randomcomb',
+    parser.add_argument('--dataset', type=str, default='bss',   #randomcomb
                         choices=['randomcomb', 'bss', 'bipalindrome'],
                         help='Dataset to be trained on.')
     # Model params
-    parser.add_argument('--model_type', type=str, default='biLSTM',
+    parser.add_argument('--model_type', type=str, default='GRU',   #biLSTM
                         choices=['LSTM', 'biLSTM', 'GRU', 'peepLSTM'],
                         help='Model type: LSTM, biLSTM, GRU or peepLSTM')
     parser.add_argument('--input_length', type=int, default=6,
@@ -205,14 +264,14 @@ if __name__ == "__main__":
     # Training params
     parser.add_argument('--batch_size', type=int, default=256,
                         help='Number of examples to process in a batch')
-    parser.add_argument('--learning_rate', type=float, default=0.001,
+    parser.add_argument('--learning_rate', type=float, default=0.0001,   #0.001
                         help='Learning rate')
     parser.add_argument('--train_steps', type=int, default=3000,
                         help='Number of training steps')
     parser.add_argument('--max_norm', type=float, default=10.0)
 
     # Misc params
-    parser.add_argument('--device', type=str, default="cuda:0",
+    parser.add_argument('--device', type=str, default="cpu",     #cuda:0
                         help="Training device 'cpu' or 'cuda:0'")
     parser.add_argument('--gpu_mem_frac', type=float, default=0.5,
                         help='Fraction of GPU memory to allocate')
@@ -220,8 +279,24 @@ if __name__ == "__main__":
                         help='Log device placement for debugging')
     parser.add_argument('--summary_path', type=str, default="./summaries/",
                         help='Output path for summaries')
+    parser.add_argument('--mode', type=str, default="standard",     #standard
+                        help="Mode to toggle to 'eval' for report output")                    
 
     config = parser.parse_args()
 
     # Train the model
-    train(config)
+    if config.mode == 'eval':
+        seq_accs = []
+        seq_loss = []
+        for seq_length in [4,5,6]:
+            seed_accs = []
+            seed_loss = []
+            for seed in [0, 42, 333]:
+                loss, acc = train(config, seed, seq_length)
+                seed_accs.append(acc), seed_loss.append(loss)
+            draw_plot(seed_accs, seed_loss, seq_length, config.model_type)
+
+    else:
+        train(config)
+
+

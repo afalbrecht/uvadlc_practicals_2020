@@ -1,0 +1,3 @@
+
+Final loss for seq_length 5: 10.0
+Final loss std for seq_length 5: 0.816496580927726
