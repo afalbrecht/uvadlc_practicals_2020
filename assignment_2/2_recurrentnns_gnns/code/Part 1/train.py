@@ -38,6 +38,8 @@ from peep_lstm import peepLSTM
 from tqdm import tqdm
 
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # You may want to look into tensorboardX for logging

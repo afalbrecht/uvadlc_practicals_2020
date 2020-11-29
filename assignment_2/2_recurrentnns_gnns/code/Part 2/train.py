@@ -24,6 +24,10 @@ import argparse
 
 import numpy as np
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import torch
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -52,7 +56,7 @@ def train(config, seed=0):
 
     # Initialize the dataset and data loader (note the +1)
     dataset = TextDataset(config.txt_file, config.seq_length)
-    data_loader = DataLoader(dataset, config.batch_size)
+    data_loader = DataLoader(dataset, config.batch_size, drop_last=True)
 
     # Initialize the model that we are going to use
     model = TextGenerationModel(
@@ -178,12 +182,12 @@ def draw_plot(acc, loss, seq_length):
     plt.fill_between(range(len(mean_acc)), mean_acc - std_acc, mean_acc + std_acc, alpha=0.2)
     plt.legend(['loss', 'accuracy'])
     # plt.show()
-    plt.savefig(f'/home/lgpu0376/code/output_dir/loss_acc_shakespeare_{seq_length}.png')
+    plt.savefig(f'/home/lgpu0376/code/output_dir/loss_acc_kant_{seq_length}.png')
     # plt.savefig(f'loss_acc_{model}_{seq_length}.png')
 
     plt.clf()
 
-    with open('/home/lgpu0376/code/output_dir/output_shakespeare.out', 'a+') as f:
+    with open('/home/lgpu0376/code/output_dir/output_kant.out', 'a+') as f:
         f.write(f'\nFinal loss for seq_length {seq_length}: {mean[-1]}')  
         f.write(f'\nFinal acc for seq_length {seq_length}: {mean_acc[-1]}')
         f.write(f'\nFinal loss std for seq_length {seq_length}: {np.mean(std)}')  
@@ -228,7 +232,7 @@ if __name__ == "__main__":
     # Misc params
     parser.add_argument('--summary_path', type=str, default="./summaries/",
                         help='Output path for summaries')
-    parser.add_argument('--print_every', type=int, default=50,
+    parser.add_argument('--print_every', type=int, default=500,
                         help='How often to print training progress')
     parser.add_argument('--sample_every', type=int, default=100,
                         help='How often to sample from the model')
