@@ -65,18 +65,19 @@ def train(config, seed=0):
         config.lstm_num_layers, config.device
     ).to(device)
 
+    if config.load_model == 'load':
+        model.load_state_dict(torch.load('output_dir/kant.pt'))
+        model.eval()
+
     # Setup the loss and optimizer
     criterion = nn.NLLLoss()
     optimizer = optim.AdamW(model.parameters(), lr=config.learning_rate)
 
     loss_history = []
     acc_history = []
-    # state = model.init_state()
 
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
 
-        # print(batch_inputs)
-        # print(len(batch_inputs))
 
         # Only for time measurement of step through network
         t1 = time.time()
@@ -84,59 +85,27 @@ def train(config, seed=0):
         # Move to GPU
         batch_inputs = torch.Tensor(torch.cat([x.float().unsqueeze(dim=0) for x in batch_inputs])).long().to(device)
         batch_targets = torch.Tensor(torch.cat([y.float().unsqueeze(dim=0) for y in batch_targets])).long().to(device)
-        # batch_inputs = torch.cat(batch_inputs).long().to(device)
-        # batch_targets = torch.cat(batch_targets).long().to(device)
-
-        # print(batch_inputs)
-        # print(batch_inputs.size())
 
         # Reset for next iteration
         model.zero_grad()
 
         # Forward pass
-        # log_probs, state = model(batch_inputs, state)
         log_probs = model(batch_inputs)
-        
-        # print('log_probs:', log_probs.size())
-        # print(batch_targets.size())
-        # print('log_probs:', log_probs.transpose(0, 1).size())
 
-        # one_hot = nn.functional.one_hot(batch_targets, dataset.vocab_size)
-
-        # loss_list = torch.Tensor([criterion(char, target) for char, target in zip(log_probs, batch_targets)])
         loss = criterion(log_probs.transpose(1, 2), batch_targets)
         loss.backward()
-        # print(log_probs.size())
-        # print(loss_list[0])
-        # print(type(loss_list[0]))
-        # loss = torch.mean(loss_list)
-        # loss_list = []
-        # for char, target in zip(log_probs, batch_targets):
-        #     loss = criterion(char, target)
-        #     loss.backward()
-        #     loss_list.append(loss.item())
-        # loss = np.mean(loss_list)
 
         torch.nn.utils.clip_grad_norm_(model.parameters(),
                                        max_norm=config.max_norm)
         
         optimizer.step()
 
-        predictions = torch.argmax(log_probs, dim=-1)    # FIXME
+        predictions = torch.argmax(log_probs, dim=-1) 
         correct = (predictions == batch_targets).sum().item()
         accuracy = correct / (log_probs.size(1) * log_probs.size(0))
 
-        # predictions = torch.argmax(log_probs, dim=-1)    # FIXME
-        # correct = (predictions == batch_targets).sum().item()
-        # accuracy = correct / log_probs.size(1)
-
-
         loss_history.append(loss.item())
         acc_history.append(accuracy)
-
-        # if step % 2e4 == 0:
-        #     print('\nLoss:', loss.item())
-        #     print('Acc:', accuracy)
 
         # Just for time measurement
         t2 = time.time()
@@ -161,6 +130,9 @@ def train(config, seed=0):
             # check this bug report:
             # https://github.com/pytorch/pytorch/pull/9655
             break
+    
+    if config.load_model == 'save':
+        torch.save(model.state_dict(), 'output_dir/kant.pt')
 
     print('Done training.')
     print('Final loss:', loss_history[-1])
@@ -175,12 +147,12 @@ def draw_plot(acc, loss, seq_length):
     plt.plot(acc)
     plt.legend(['loss', 'accuracy'])
     # plt.show()
-    plt.savefig(f'/home/lgpu0376/code/output_dir/loss_acc_kant_{seq_length}.png')
+    plt.savefig(f'output_dir/loss_acc_kant_{seq_length}.png')
     # plt.savefig(f'loss_acc_{model}_{seq_length}.png')
 
     plt.clf()
 
-    with open('/home/lgpu0376/code/output_dir/output_kant.out', 'a+') as f:
+    with open('output_dir/output_kant.out', 'a+') as f:
         f.write(f'\nFinal loss for seq_length: {loss[-1]}')  
         f.write(f'\nFinal acc for seq_length: {acc[-1]}')
 
@@ -230,6 +202,8 @@ if __name__ == "__main__":
                         help='How often to sample from the model')
     parser.add_argument('--device', type=str, default=("cpu" if not torch.cuda.is_available() else "cuda"),
                         help="Device to run the model on.")
+    parser.add_argument('--load_model', type=str, default='save',
+                        help='Load or save model using "load" or "save"')
 
     # If needed/wanted, feel free to add more arguments
 

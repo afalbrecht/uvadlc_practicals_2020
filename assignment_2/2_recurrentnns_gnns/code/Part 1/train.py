@@ -155,8 +155,8 @@ def train(config, seed=0, seq_length=0):
 
         # Forward pass
         log_probs = model(batch_inputs)
-        print('log', log_probs.size())
-        print('batch', batch_targets.size)
+        # print('log', log_probs.size())
+        # print('batch', batch_targets.size)
 
         # Compute the loss, gradients and update network parameters
         loss = loss_function(log_probs, batch_targets)
@@ -228,12 +228,12 @@ def draw_plot(acc, loss, seq_length, model):
     plt.fill_between(range(len(mean_acc)), mean_acc - std_acc, mean_acc + std_acc, alpha=0.2)
     plt.legend(['loss', 'accuracy'])
     # plt.show()
-    plt.savefig(f'/home/lgpu0376/code/output_dir/loss_acc_{model}_{seq_length}.png')
+    plt.savefig(f'output_dir/loss_acc_{model}_{seq_length}.png')
     # plt.savefig(f'loss_acc_{model}_{seq_length}.png')
 
     plt.clf()
 
-    with open('/home/lgpu0376/code/output_dir/output_LSTM.out', 'a+') as f:
+    with open('output_dir/output_LSTM.out', 'a+') as f:
         f.write(f'\nFinal loss for seq_length {seq_length}: {mean[-1]}')  
         f.write(f'\nFinal acc for seq_length {seq_length}: {mean_acc[-1]}')
         f.write(f'\nFinal loss std for seq_length {seq_length}: {np.mean(std)}')  

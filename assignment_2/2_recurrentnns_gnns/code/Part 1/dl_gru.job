@@ -2,7 +2,7 @@
 
 #SBATCH --partition=gpu_shared_course
 #SBATCH --gres=gpu:1
-#SBATCH --job-name=lstm_job
+#SBATCH --job-name=gru_job
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=3
 #SBATCH --time=00:30:00
@@ -22,7 +22,7 @@ cd "$HOME/uvadlc_practicals_2020/assignment_2/2_recurrentnns_gnns/code/Part 1"
 # Activate your environment
 source activate dl2020
 # Run your code
-srun python -u train.py --model_type='LSTM' --device='cuda:0' --mode='eval'
+srun python -u train.py --model_type='GRU' --device='cuda:0' --mode='eval'
 
 # seq_length = [4,5,6]
 # optimizer = Adam
