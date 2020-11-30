@@ -145,7 +145,7 @@ def train(config, seed=0):
     return loss_history, acc_history
 
 def generate_sequence(config, seed=0,
-                      model_path='output_dir/kant.pt', init_char='t'):
+                      model_path='output_dir/kant_30_final.pt', init_char='t'):
 
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -165,20 +165,37 @@ def generate_sequence(config, seed=0,
 
     # Initialize the model that we are going to use
     model = TextGenerationModel(
-        config.batch_size, config.seq_length, 
+        1, 1, 
         dataset.vocab_size, config.lstm_num_hidden,
         config.lstm_num_layers, config.device
     ).to(device)
 
     
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=config.device))
     model.eval()
 
-    sequence = torch.Tensor(dataset._char_to_ix[init_char])
+    print(init_char)
+    # print(torch.Tensor([dataset._char_to_ix[init_char]]))
+    # char = dataset._char_to_ix[init_char]
+    word_list = [dataset._char_to_ix[char] for char in init_char]
+    # sequence = torch.Tensor([dataset._char_to_ix[init_char]]).long().reshape(1,1)
+    # print(sequence)
     state = model.init_state()
+    # print(sequence.size())
 
-    for char in range(config.seq_length):
-        output, state = model.predict(sequence, state)
+    for step in range(30):
+        last = torch.tensor([[word_list[step]]]).long().to(device)
+        print(last)
+        output, state = model.predict(last, state)
+        # print(state[0][0,0,0])
+        if step + 1 >= len(word_list):
+            word_list.append(torch.argmax(output).item())
+        # sequence = torch.cat((sequence, torch.argmax(output).reshape(1,1)))
+        # print(sequence.size())
+    
+    print(''.join([dataset._ix_to_char[ix] for ix in word_list]))
+    return word_list
+
 
 
 
@@ -208,7 +225,7 @@ if __name__ == "__main__":
 
     # Model params
     parser.add_argument('--txt_file', type=str, required=False, #TODO: required=True
-                        default="Part 2/assets/book_EN_shakespeare_complete.txt",
+                        default="assets/book_EN_critique_of_pure_reason.txt",
                         help="Path to a .txt file to train on")
     parser.add_argument('--seq_length', type=int, default=30,   #TODO: 30
                         help='Length of an input sequence')
@@ -247,11 +264,16 @@ if __name__ == "__main__":
                         help="Device to run the model on.")
     parser.add_argument('--load_model', type=str, default='save',
                         help='Load or save model using "load" or "save"')
+    parser.add_argument('--mode', type=str, default='predict',
+                        help='Mode of net can be "train" or "predict"')                        
 
     # If needed/wanted, feel free to add more arguments
 
     config = parser.parse_args()
 
     # Train the model
-    loss, acc = train(config)
+    if config.mode == 'train':
+        loss, acc = train(config)
     # draw_plot(acc, loss, config.seq_length)
+    if config.mode == 'predict':
+        output = generate_sequence(config, init_char='dial')

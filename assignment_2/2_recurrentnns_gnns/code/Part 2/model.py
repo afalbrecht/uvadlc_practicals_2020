@@ -76,6 +76,7 @@ class TextGenerationModel(nn.Module):
 
     def predict(self, x, prev_state):
         with torch.no_grad():
+            # print(x)
             embed = self.embedding(x)
             output, new_state = self.lstm(embed, prev_state)
             output = self.fc(output)
