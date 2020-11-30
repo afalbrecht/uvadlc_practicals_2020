@@ -22,7 +22,7 @@ cd "$HOME/uvadlc_practicals_2020/assignment_2/2_recurrentnns_gnns/code/Part 1"
 # Activate your environment
 source activate dl2020
 # Run your code
-srun python -u train.py --model_type='GRU' --device='cuda:0' --mode='eval'
+srun python -u train.py --model_type='GRU' --device='cuda:0' --mode='eval' --train_steps=1000
 
 # seq_length = [4,5,6]
 # optimizer = Adam

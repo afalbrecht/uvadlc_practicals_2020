@@ -233,7 +233,7 @@ def draw_plot(acc, loss, seq_length, model):
 
     plt.clf()
 
-    with open('output_dir/output_LSTM.out', 'a+') as f:
+    with open(f'output_dir/output_{model}.out', 'a+') as f:
         f.write(f'\nFinal loss for seq_length {seq_length}: {mean[-1]}')  
         f.write(f'\nFinal acc for seq_length {seq_length}: {mean_acc[-1]}')
         f.write(f'\nFinal loss std for seq_length {seq_length}: {np.mean(std)}')  

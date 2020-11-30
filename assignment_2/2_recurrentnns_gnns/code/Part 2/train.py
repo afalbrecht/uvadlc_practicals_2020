@@ -112,7 +112,7 @@ def train(config, seed=0):
         t2 = time.time()
         examples_per_second = config.batch_size/float(t2-t1)
 
-        if config.load_model == 'save' and step % 7000:
+        if config.load_model == 'save' and step % 7000 == 0:
             torch.save(model.state_dict(), f'output_dir/kant_{config.seq_length}_{count}.pt')
             count += 1
 
@@ -143,6 +143,44 @@ def train(config, seed=0):
     print('Final loss:', loss_history[-1])
     print('Final acc:', acc_history[-1])
     return loss_history, acc_history
+
+def generate_sequence(config, seed=0,
+                      model_path='output_dir/kant.pt', init_char='t'):
+
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # Initialize the device which to run the model on
+    device = torch.device(config.device)
+    print(device)
+
+    # Initialize the dataset and data loader (note the +1)
+    dataset = TextDataset(config.txt_file, config.seq_length)
+
+    # Initialize the model that we are going to use
+    model = TextGenerationModel(
+        config.batch_size, config.seq_length, 
+        dataset.vocab_size, config.lstm_num_hidden,
+        config.lstm_num_layers, config.device
+    ).to(device)
+
+    
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
+
+    sequence = torch.Tensor(dataset._char_to_ix[init_char])
+    state = model.init_state()
+
+    for char in range(config.seq_length):
+        output, state = model.predict(sequence, state)
+
+
 
 ###############################################################################
 ###############################################################################
