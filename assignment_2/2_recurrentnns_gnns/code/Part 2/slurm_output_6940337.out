@@ -1,0 +1,10 @@
+cuda
+Traceback (most recent call last):
+  File "train.py", line 243, in <module>
+    loss, acc = train(config)
+  File "train.py", line 54, in train
+    dataset = TextDataset(config.txt_file, config.seq_length)
+  File "/home/lgpu0376/uvadlc_practicals_2020/assignment_2/2_recurrentnns_gnns/code/Part 2/dataset.py", line 30, in __init__
+    self._data = open(filename, 'r').read()
+FileNotFoundError: [Errno 2] No such file or directory: 'Part 2/assets/book_EN_shakespeare_complete.txt'
+srun: error: r31n1: task 0: Exited with exit code 1

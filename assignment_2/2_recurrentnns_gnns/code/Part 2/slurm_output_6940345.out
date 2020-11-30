@@ -1,0 +1,16 @@
+cuda
+Initialize dataset with 5597742 characters, 113 unique.
+embed_dim: 32
+Traceback (most recent call last):
+  File "train.py", line 243, in <module>
+    loss, acc = train(config)
+  File "train.py", line 94, in train
+    log_probs = model(batch_inputs)
+  File "/home/lgpu0376/.conda/envs/dl2020/lib/python3.7/site-packages/torch/nn/modules/module.py", line 722, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/home/lgpu0376/uvadlc_practicals_2020/assignment_2/2_recurrentnns_gnns/code/Part 2/model.py", line 83, in forward
+    output, _ = self.lstm(embed, self.init_state())
+  File "/home/lgpu0376/uvadlc_practicals_2020/assignment_2/2_recurrentnns_gnns/code/Part 2/model.py", line 66, in init_state
+    return (torch.zeros(self.num_layers, self.batch_size, self.num_hidden).to(device),
+NameError: name 'device' is not defined
+srun: error: r30n6: task 0: Exited with exit code 1
