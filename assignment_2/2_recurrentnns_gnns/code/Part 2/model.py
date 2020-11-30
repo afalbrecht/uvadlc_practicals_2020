@@ -65,16 +65,6 @@ class TextGenerationModel(nn.Module):
     def init_state(self):
         return (torch.zeros(self.num_layers, self.batch_size, self.num_hidden).to(self.device),
                 torch.zeros(self.num_layers, self.batch_size, self.num_hidden).to(self.device))
-
-    # def forward(self, x, prev_state):
-    #     # print(x.size())
-    #     embed = self.embedding(x)
-    #     # print(embed.size())
-    #     output, new_state = self.lstm(embed, prev_state)
-    #     output = self.fc(output)
-    #     output = self.logsoftmax(output)
-
-    #     return output, new_state
     
     def forward(self, x):
         # print(x.size())
@@ -86,6 +76,7 @@ class TextGenerationModel(nn.Module):
 
         return output
 
+    # def predict(self, x)
 
 
 

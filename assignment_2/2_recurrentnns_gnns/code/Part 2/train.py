@@ -75,6 +75,7 @@ def train(config, seed=0):
 
     loss_history = []
     acc_history = []
+    count = 1
 
     for step, (batch_inputs, batch_targets) in enumerate(data_loader):
 
@@ -111,6 +112,10 @@ def train(config, seed=0):
         t2 = time.time()
         examples_per_second = config.batch_size/float(t2-t1)
 
+        if config.load_model == 'save' and step % 7000:
+            torch.save(model.state_dict(), f'output_dir/kant_{config.seq_length}_{count}.pt')
+            count += 1
+
         if (step + 1) % config.print_every == 0:
 
             print("[{}] Train Step {:04d}/{:04d}, Batch Size = {}, \
@@ -132,7 +137,7 @@ def train(config, seed=0):
             break
     
     if config.load_model == 'save':
-        torch.save(model.state_dict(), 'output_dir/kant.pt')
+        torch.save(model.state_dict(), f'output_dir/kant_{config.seq_length}_{count}.pt')
 
     print('Done training.')
     print('Final loss:', loss_history[-1])
@@ -211,4 +216,4 @@ if __name__ == "__main__":
 
     # Train the model
     loss, acc = train(config)
-    draw_plot(acc, loss, config.seq_length)
+    # draw_plot(acc, loss, config.seq_length)
