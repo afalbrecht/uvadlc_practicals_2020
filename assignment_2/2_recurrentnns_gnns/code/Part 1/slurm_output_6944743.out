@@ -1,0 +1,369 @@
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 4.271868705749512
+Acc: 0.20703125
+[2020-11-30 17:32] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 559.58, Accuracy = 0.21, Loss = 4.272
+[2020-11-30 17:32] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 3144.36, Accuracy = 0.89, Loss = 0.315
+[2020-11-30 17:32] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 8674.46, Accuracy = 0.91, Loss = 0.267
+[2020-11-30 17:32] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 3397.47, Accuracy = 0.96, Loss = 0.164
+
+Loss: 0.19770249724388123
+Acc: 0.94921875
+[2020-11-30 17:32] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 6034.97, Accuracy = 0.97, Loss = 0.114
+[2020-11-30 17:32] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 6028.80, Accuracy = 0.99, Loss = 0.055
+[2020-11-30 17:32] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 3261.90, Accuracy = 0.98, Loss = 0.059
+
+Loss: 0.034945614635944366
+Acc: 0.9921875
+[2020-11-30 17:32] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 8720.67, Accuracy = 1.00, Loss = 0.014
+[2020-11-30 17:32] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 4689.77, Accuracy = 1.00, Loss = 0.006
+[2020-11-30 17:33] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 4426.74, Accuracy = 1.00, Loss = 0.002
+
+Loss: 0.002001236891373992
+Acc: 1.0
+[2020-11-30 17:33] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 3362.28, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:33] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 5469.21, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:33] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 7578.59, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:33] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 6258.88, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.0006280025700107217
+Acc: 1.0
+[2020-11-30 17:33] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 3312.41, Accuracy = 1.00, Loss = 0.000
+[2020-11-30 17:33] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 6029.38, Accuracy = 1.00, Loss = 0.000
+[2020-11-30 17:33] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 4761.94, Accuracy = 1.00, Loss = 0.000
+
+Loss: 0.0003315965586807579
+Acc: 1.0
+Done training with seed 0 and seq_length 4
+Final loss: 0.0003315965586807579
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 6.174771785736084
+Acc: 0.19921875
+[2020-11-30 17:33] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2733.80, Accuracy = 0.20, Loss = 6.175
+[2020-11-30 17:33] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 4173.87, Accuracy = 0.87, Loss = 0.321
+[2020-11-30 17:33] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 3489.07, Accuracy = 0.90, Loss = 0.266
+[2020-11-30 17:33] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 5868.12, Accuracy = 0.89, Loss = 0.302
+
+Loss: 0.15708430111408234
+Acc: 0.9609375
+[2020-11-30 17:33] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 5767.57, Accuracy = 0.96, Loss = 0.155
+[2020-11-30 17:33] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 3312.85, Accuracy = 0.96, Loss = 0.144
+[2020-11-30 17:33] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 8760.73, Accuracy = 0.97, Loss = 0.069
+
+Loss: 0.053395967930555344
+Acc: 0.98828125
+[2020-11-30 17:33] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 3627.87, Accuracy = 1.00, Loss = 0.008
+[2020-11-30 17:33] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 3668.96, Accuracy = 1.00, Loss = 0.019
+[2020-11-30 17:34] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 4098.72, Accuracy = 1.00, Loss = 0.015
+
+Loss: 0.0023349171970039606
+Acc: 1.0
+[2020-11-30 17:34] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 3448.81, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:34] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 6043.73, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:34] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 6062.13, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:34] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 4853.27, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.001750272000208497
+Acc: 1.0
+[2020-11-30 17:34] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 5991.70, Accuracy = 1.00, Loss = 0.000
+[2020-11-30 17:34] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 5946.50, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:34] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 3690.19, Accuracy = 1.00, Loss = 0.000
+
+Loss: 0.00038727439823560417
+Acc: 1.0
+Done training with seed 42 and seq_length 4
+Final loss: 0.00038727439823560417
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 1.619375467300415
+Acc: 0.25390625
+[2020-11-30 17:34] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2802.04, Accuracy = 0.25, Loss = 1.619
+[2020-11-30 17:34] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 3465.17, Accuracy = 0.88, Loss = 0.308
+[2020-11-30 17:34] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 4450.39, Accuracy = 0.91, Loss = 0.239
+[2020-11-30 17:34] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 3323.39, Accuracy = 0.96, Loss = 0.144
+
+Loss: 0.1261814683675766
+Acc: 0.96875
+[2020-11-30 17:34] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 6031.27, Accuracy = 0.98, Loss = 0.117
+[2020-11-30 17:34] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 4055.93, Accuracy = 0.98, Loss = 0.082
+[2020-11-30 17:34] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 4699.29, Accuracy = 0.97, Loss = 0.082
+
+Loss: 0.020811963826417923
+Acc: 0.9921875
+[2020-11-30 17:34] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 6041.69, Accuracy = 0.99, Loss = 0.037
+[2020-11-30 17:34] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 4705.49, Accuracy = 1.00, Loss = 0.028
+[2020-11-30 17:35] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 4207.24, Accuracy = 1.00, Loss = 0.005
+
+Loss: 0.0009698715293779969
+Acc: 1.0
+[2020-11-30 17:35] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 3131.74, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:35] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 4418.24, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:35] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 4490.63, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:35] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 3671.80, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.0006357384263537824
+Acc: 1.0
+[2020-11-30 17:35] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 3642.95, Accuracy = 1.00, Loss = 0.000
+[2020-11-30 17:35] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 4687.87, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:35] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 3334.72, Accuracy = 1.00, Loss = 0.000
+
+Loss: 0.00024808276793919504
+Acc: 1.0
+Done training with seed 333 and seq_length 4
+Final loss: 0.00024808276793919504
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 3.2347021102905273
+Acc: 0.35546875
+[2020-11-30 17:35] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2779.75, Accuracy = 0.36, Loss = 3.235
+[2020-11-30 17:35] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 5285.49, Accuracy = 0.82, Loss = 0.441
+[2020-11-30 17:35] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 4063.93, Accuracy = 0.84, Loss = 0.393
+[2020-11-30 17:35] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 5085.09, Accuracy = 0.93, Loss = 0.242
+
+Loss: 0.21184712648391724
+Acc: 0.9453125
+[2020-11-30 17:35] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 2871.42, Accuracy = 0.98, Loss = 0.094
+[2020-11-30 17:35] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 3037.22, Accuracy = 0.98, Loss = 0.114
+[2020-11-30 17:35] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 2611.49, Accuracy = 0.99, Loss = 0.049
+
+Loss: 0.06355059891939163
+Acc: 0.984375
+[2020-11-30 17:36] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 3188.10, Accuracy = 1.00, Loss = 0.044
+[2020-11-30 17:36] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 3053.80, Accuracy = 0.99, Loss = 0.016
+[2020-11-30 17:36] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 2667.17, Accuracy = 1.00, Loss = 0.009
+
+Loss: 0.004511083941906691
+Acc: 1.0
+[2020-11-30 17:36] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 5085.57, Accuracy = 1.00, Loss = 0.005
+[2020-11-30 17:36] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 2403.10, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:36] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 3084.98, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:36] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 2568.11, Accuracy = 1.00, Loss = 0.002
+
+Loss: 0.0015594593714922667
+Acc: 1.0
+[2020-11-30 17:36] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 2567.61, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:36] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 3185.19, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:36] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 2604.77, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.0007607487495988607
+Acc: 1.0
+Done training with seed 0 and seq_length 5
+Final loss: 0.0007607487495988607
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 4.565916538238525
+Acc: 0.359375
+[2020-11-30 17:36] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2649.58, Accuracy = 0.36, Loss = 4.566
+[2020-11-30 17:36] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 5087.98, Accuracy = 0.81, Loss = 0.418
+[2020-11-30 17:37] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 7119.83, Accuracy = 0.86, Loss = 0.358
+[2020-11-30 17:37] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 3365.05, Accuracy = 0.94, Loss = 0.231
+
+Loss: 0.17535102367401123
+Acc: 0.94921875
+[2020-11-30 17:37] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 2179.50, Accuracy = 0.96, Loss = 0.133
+[2020-11-30 17:37] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 2531.94, Accuracy = 0.98, Loss = 0.106
+[2020-11-30 17:37] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 3980.11, Accuracy = 0.98, Loss = 0.061
+
+Loss: 0.07293762266635895
+Acc: 0.96875
+[2020-11-30 17:37] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 5166.14, Accuracy = 0.98, Loss = 0.065
+[2020-11-30 17:37] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 2637.10, Accuracy = 0.99, Loss = 0.031
+[2020-11-30 17:37] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 2750.42, Accuracy = 0.99, Loss = 0.046
+
+Loss: 0.012149941176176071
+Acc: 0.9921875
+[2020-11-30 17:37] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 2530.71, Accuracy = 0.99, Loss = 0.012
+[2020-11-30 17:37] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 3090.62, Accuracy = 1.00, Loss = 0.007
+[2020-11-30 17:37] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 4840.67, Accuracy = 1.00, Loss = 0.005
+[2020-11-30 17:37] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 2832.52, Accuracy = 1.00, Loss = 0.003
+
+Loss: 0.0016842520562931895
+Acc: 1.0
+[2020-11-30 17:37] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 3293.40, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:38] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 3159.63, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:38] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 4198.75, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.0004886426031589508
+Acc: 1.0
+Done training with seed 42 and seq_length 5
+Final loss: 0.0004886426031589508
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 1.299360752105713
+Acc: 0.3984375
+[2020-11-30 17:38] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2693.46, Accuracy = 0.40, Loss = 1.299
+[2020-11-30 17:38] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 2616.42, Accuracy = 0.85, Loss = 0.414
+[2020-11-30 17:38] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 2579.96, Accuracy = 0.91, Loss = 0.288
+[2020-11-30 17:38] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 4005.83, Accuracy = 0.94, Loss = 0.130
+
+Loss: 0.1448088139295578
+Acc: 0.96484375
+[2020-11-30 17:38] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 2691.68, Accuracy = 0.97, Loss = 0.119
+[2020-11-30 17:38] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 2601.66, Accuracy = 0.96, Loss = 0.144
+[2020-11-30 17:38] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 4711.34, Accuracy = 0.98, Loss = 0.094
+
+Loss: 0.056756626814603806
+Acc: 0.984375
+[2020-11-30 17:38] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 2640.76, Accuracy = 0.98, Loss = 0.052
+[2020-11-30 17:38] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 4342.40, Accuracy = 0.99, Loss = 0.024
+[2020-11-30 17:38] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 2645.67, Accuracy = 0.99, Loss = 0.021
+
+Loss: 0.007792203687131405
+Acc: 1.0
+[2020-11-30 17:39] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 2434.42, Accuracy = 1.00, Loss = 0.008
+[2020-11-30 17:39] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 3164.32, Accuracy = 1.00, Loss = 0.006
+[2020-11-30 17:39] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 3965.97, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:39] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 2534.21, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.000892501964699477
+Acc: 1.0
+[2020-11-30 17:39] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 2630.10, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:39] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 2658.44, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:39] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 4638.53, Accuracy = 1.00, Loss = 0.000
+
+Loss: 0.00032577168894931674
+Acc: 1.0
+Done training with seed 333 and seq_length 5
+Final loss: 0.00032577168894931674
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 3.004865884780884
+Acc: 0.4609375
+[2020-11-30 17:39] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2584.03, Accuracy = 0.46, Loss = 3.005
+[2020-11-30 17:39] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 4577.90, Accuracy = 0.78, Loss = 0.477
+[2020-11-30 17:39] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 3067.80, Accuracy = 0.80, Loss = 0.425
+[2020-11-30 17:39] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 2716.00, Accuracy = 0.94, Loss = 0.182
+
+Loss: 0.18592241406440735
+Acc: 0.93359375
+[2020-11-30 17:39] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 3617.94, Accuracy = 0.98, Loss = 0.107
+[2020-11-30 17:40] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 3584.17, Accuracy = 0.98, Loss = 0.110
+[2020-11-30 17:40] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 3512.86, Accuracy = 0.99, Loss = 0.037
+
+Loss: 0.09223577380180359
+Acc: 0.96484375
+[2020-11-30 17:40] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 2773.14, Accuracy = 0.99, Loss = 0.030
+[2020-11-30 17:40] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 3043.63, Accuracy = 0.98, Loss = 0.047
+[2020-11-30 17:40] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 3623.81, Accuracy = 1.00, Loss = 0.023
+
+Loss: 0.006948193535208702
+Acc: 0.99609375
+[2020-11-30 17:40] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 2416.65, Accuracy = 1.00, Loss = 0.007
+[2020-11-30 17:40] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 2553.89, Accuracy = 1.00, Loss = 0.006
+[2020-11-30 17:40] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 2761.52, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:40] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 3088.97, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.0013377261348068714
+Acc: 1.0
+[2020-11-30 17:40] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 3188.83, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:40] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 3567.54, Accuracy = 1.00, Loss = 0.002
+[2020-11-30 17:41] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 3546.87, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.000476761837489903
+Acc: 1.0
+Done training with seed 0 and seq_length 6
+Final loss: 0.000476761837489903
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 3.4036803245544434
+Acc: 0.52734375
+[2020-11-30 17:41] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2582.05, Accuracy = 0.53, Loss = 3.404
+[2020-11-30 17:41] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 2454.83, Accuracy = 0.75, Loss = 0.527
+[2020-11-30 17:41] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 3070.73, Accuracy = 0.86, Loss = 0.354
+[2020-11-30 17:41] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 2842.05, Accuracy = 0.95, Loss = 0.202
+
+Loss: 0.1970619559288025
+Acc: 0.9453125
+[2020-11-30 17:41] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 3098.81, Accuracy = 0.92, Loss = 0.232
+[2020-11-30 17:41] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 3782.78, Accuracy = 0.96, Loss = 0.141
+[2020-11-30 17:41] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 2561.02, Accuracy = 0.99, Loss = 0.078
+
+Loss: 0.06583589315414429
+Acc: 1.0
+[2020-11-30 17:41] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 3563.35, Accuracy = 0.98, Loss = 0.072
+[2020-11-30 17:41] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 3622.12, Accuracy = 0.99, Loss = 0.019
+[2020-11-30 17:41] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 4346.18, Accuracy = 0.98, Loss = 0.064
+
+Loss: 0.011026691645383835
+Acc: 1.0
+[2020-11-30 17:41] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 3360.34, Accuracy = 1.00, Loss = 0.011
+[2020-11-30 17:42] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 3180.18, Accuracy = 0.99, Loss = 0.032
+[2020-11-30 17:42] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 2875.47, Accuracy = 0.99, Loss = 0.011
+[2020-11-30 17:42] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 2297.32, Accuracy = 1.00, Loss = 0.009
+
+Loss: 0.0022129984572529793
+Acc: 1.0
+[2020-11-30 17:42] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 2472.07, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:42] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 2243.59, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:42] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 2885.67, Accuracy = 1.00, Loss = 0.002
+
+Loss: 0.0009004136081784964
+Acc: 1.0
+Done training with seed 42 and seq_length 6
+Final loss: 0.0009004136081784964
+Final acc: 1.0
+cuda:0
+Load bss dataset ...
+Initializing LSTM model ...
+
+Loss: 1.2737637758255005
+Acc: 0.4296875
+[2020-11-30 17:42] Train Step 0000/1000, Batch Size = 256,                    Examples/Sec = 2360.43, Accuracy = 0.43, Loss = 1.274
+[2020-11-30 17:42] Train Step 0060/1000, Batch Size = 256,                    Examples/Sec = 3056.47, Accuracy = 0.81, Loss = 0.412
+[2020-11-30 17:42] Train Step 0120/1000, Batch Size = 256,                    Examples/Sec = 3072.54, Accuracy = 0.91, Loss = 0.257
+[2020-11-30 17:42] Train Step 0180/1000, Batch Size = 256,                    Examples/Sec = 3737.13, Accuracy = 0.97, Loss = 0.135
+
+Loss: 0.12525327503681183
+Acc: 0.97265625
+[2020-11-30 17:42] Train Step 0240/1000, Batch Size = 256,                    Examples/Sec = 3118.51, Accuracy = 0.98, Loss = 0.087
+[2020-11-30 17:43] Train Step 0300/1000, Batch Size = 256,                    Examples/Sec = 2271.27, Accuracy = 0.97, Loss = 0.125
+[2020-11-30 17:43] Train Step 0360/1000, Batch Size = 256,                    Examples/Sec = 2972.29, Accuracy = 0.98, Loss = 0.085
+
+Loss: 0.11446439474821091
+Acc: 0.9609375
+[2020-11-30 17:43] Train Step 0420/1000, Batch Size = 256,                    Examples/Sec = 3565.02, Accuracy = 0.96, Loss = 0.101
+[2020-11-30 17:43] Train Step 0480/1000, Batch Size = 256,                    Examples/Sec = 3059.09, Accuracy = 0.99, Loss = 0.052
+[2020-11-30 17:43] Train Step 0540/1000, Batch Size = 256,                    Examples/Sec = 2672.37, Accuracy = 0.98, Loss = 0.064
+
+Loss: 0.017023958265781403
+Acc: 0.98828125
+[2020-11-30 17:43] Train Step 0600/1000, Batch Size = 256,                    Examples/Sec = 3506.99, Accuracy = 0.99, Loss = 0.017
+[2020-11-30 17:43] Train Step 0660/1000, Batch Size = 256,                    Examples/Sec = 2304.71, Accuracy = 1.00, Loss = 0.006
+[2020-11-30 17:43] Train Step 0720/1000, Batch Size = 256,                    Examples/Sec = 3547.06, Accuracy = 1.00, Loss = 0.003
+[2020-11-30 17:43] Train Step 0780/1000, Batch Size = 256,                    Examples/Sec = 2208.55, Accuracy = 1.00, Loss = 0.002
+
+Loss: 0.0014870772138237953
+Acc: 1.0
+[2020-11-30 17:43] Train Step 0840/1000, Batch Size = 256,                    Examples/Sec = 2917.82, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:43] Train Step 0900/1000, Batch Size = 256,                    Examples/Sec = 3049.07, Accuracy = 1.00, Loss = 0.001
+[2020-11-30 17:44] Train Step 0960/1000, Batch Size = 256,                    Examples/Sec = 3567.69, Accuracy = 1.00, Loss = 0.001
+
+Loss: 0.0009323933627456427
+Acc: 1.0
+Done training with seed 333 and seq_length 6
+Final loss: 0.0009323933627456427
+Final acc: 1.0

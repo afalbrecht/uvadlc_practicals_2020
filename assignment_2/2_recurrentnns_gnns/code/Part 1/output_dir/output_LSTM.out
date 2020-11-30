@@ -1,0 +1,13 @@
+
+Final loss for seq_length 4: 0.0003223179082851857
+Final acc for seq_length 4: 1.0
+Final loss std for seq_length 4: 0.019408810400264914
+Final acc std for seq_length 4: 0.006514319663235293
+Final loss for seq_length 5: 0.0005250543472357094
+Final acc for seq_length 5: 1.0
+Final loss std for seq_length 5: 0.019647995365349044
+Final acc std for seq_length 5: 0.0075914874486790246
+Final loss for seq_length 6: 0.0007698562694713473
+Final acc for seq_length 6: 1.0
+Final loss std for seq_length 6: 0.019827353811437704
+Final acc std for seq_length 6: 0.008422463924259976
