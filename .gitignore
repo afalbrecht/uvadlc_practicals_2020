@@ -4,4 +4,5 @@
 **.pyc
 **/cifar10/*
 .idea
-assignment_3/3_generative/data
+assignment_3/data
+assignment_3/3_generative/VAE_logs
