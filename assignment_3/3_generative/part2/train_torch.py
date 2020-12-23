@@ -58,6 +58,9 @@ class GAN(nn.Module):
                                       dp_rate=dp_rate_gen)
         self.discriminator = DiscriminatorMLP(hidden_dims=hidden_dims_disc,
                                               dp_rate=dp_rate_disc)
+        # self.z_dim = z_dim
+        self.criterion = torch.nn.BCEWithLogitsLoss()
+
 
     @torch.no_grad()
     def sample(self, batch_size):
@@ -69,8 +72,9 @@ class GAN(nn.Module):
         Outputs:
             x - Generated images of shape [B,C,H,W]
         """
-        x = None
-        raise NotImplementedError
+
+        z = torch.randn((batch_size, self.generator.z_dim)).to(self.generator.device)
+        x = self.generator(z)
         return x
 
     @torch.no_grad()
@@ -107,10 +111,17 @@ class GAN(nn.Module):
             logging_dict - Dictionary of string to Tensor that should be added
                            to our TensorBoard logger
         """
+        
+        z = torch.randn((x_real.shape[0], self.generator.z_dim)).to(self.generator.device)
+        
+        imgs = self.generator(z)
+        # imgs = self.sample(x_real.shape[0])
+        d_out = self.discriminator(imgs)
+        # Applied label smoothing as per https://github.com/soumith/ganhacks
+        smooth_labels = torch.randint_like(d_out, low=7, high=12)/10     
 
-        loss = None
+        loss = self.criterion(d_out, smooth_labels)/2
         logging_dict = {"loss": loss}
-        raise NotImplementedError
 
         return loss, logging_dict
 
@@ -133,9 +144,28 @@ class GAN(nn.Module):
 
         # Remark: there are more metrics that you can add. 
         # For instance, how about the accuracy of the discriminator?
-        loss = None
-        logging_dict = {"loss": loss}
-        raise NotImplementedError
+
+        # z = torch.randn((x_real.shape[0], self.generator.z_dim)).to(self.generator.device)
+        
+        # imgs = self.generator(z)
+        imgs = self.sample(x_real.shape[0])
+        d_out = self.discriminator(imgs).squeeze()
+        labels_f = torch.randint_like(d_out, low=0, high=3)/10
+        loss_f = self.criterion(d_out, labels_f)
+
+        acc_f = (torch.round(torch.sigmoid(d_out)) \
+                 == torch.zeros_like(d_out)).float().mean()
+
+        d_out = self.discriminator(x_real).squeeze()
+        labels_r = torch.randint_like(d_out, low=7, high=12)/10
+        loss_r = self.criterion(d_out, labels_r)
+
+        acc_r = (torch.round(torch.sigmoid(d_out))
+                 == torch.ones_like(d_out)).float().mean()
+
+        acc = (acc_f + acc_r)/2
+        loss = (loss_f + loss_r)/2
+        logging_dict = {"loss": loss, "acc": acc}
 
         return loss, logging_dict
 
@@ -164,7 +194,9 @@ def generate_and_save(model, epoch, summary_writer, batch_size=64):
     # - Use torchvision function "make_grid" to create a grid of multiple images
     # - Use torchvision function "save_image" to save an image grid to disk
 
-    raise NotImplementedError
+    imgs = model.sample(batch_size)
+    grid = make_grid(imgs)
+    save_image(grid, summary_writer.log_dir + f'/sample_{epoch}.pdf')
 
 
 def interpolate_and_save(model, epoch, summary_writer, batch_size=64,
@@ -210,6 +242,8 @@ def train_gan(model, train_loader,
 
     for imgs, _ in train_loader:
         imgs = imgs.to(model.device)
+        
+
 
         # Remark: add the logging dictionaries via 
         # "logger_gen.add_values(logging_dict)" for the generator, and
@@ -218,10 +252,18 @@ def train_gan(model, train_loader,
         #  of the respective step functions)
 
         # Generator update
-        raise NotImplementedError
+        optimizer_gen.zero_grad()
+        loss, logging_dict = model.generator_step(imgs)
+        loss.backward()
+        optimizer_gen.step()
+        logger_gen.add_values(logging_dict)
 
         # Discriminator update
-        raise NotImplementedError
+        optimizer_disc.zero_grad()
+        loss, logging_dict = model.discriminator_step(imgs)
+        loss.backward()
+        optimizer_disc.step()
+        logger_disc.add_values(logging_dict)
 
 
 def seed_everything(seed):
@@ -267,9 +309,8 @@ def main(args):
     # Create two separate optimizers for generator and discriminator
     # You can use the Adam optimizer for both models.
     # It is recommended to reduce the momentum (beta1) to e.g. 0.5
-    optimizer_gen = None
-    optimizer_disc = None
-    raise NotImplementedError
+    optimizer_gen = torch.optim.AdamW(model.generator.parameters(), lr=args.lr, betas=[0.5, 0.9999])
+    optimizer_disc = torch.optim.AdamW(model.discriminator.parameters(), lr=args.lr, betas=[0.5, 0.9999])
 
     # TensorBoard logger
     # See utils.py for details on "TensorBoardLogger" class

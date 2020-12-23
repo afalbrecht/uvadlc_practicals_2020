@@ -32,8 +32,8 @@ def sample_reparameterize(mean, std):
             The tensor should have the same shape as the mean and std input tensors.
     """
 
-    z = None
-    raise NotImplementedError
+    eps = torch.randn_like(std)
+    z = mean + eps * std        # TODO: sqrt of std?
     return z
 
 
@@ -49,8 +49,8 @@ def KLD(mean, log_std):
               The values represent the Kullback-Leibler divergence to unit Gaussians.
     """
 
-    KLD = None
-    raise NotImplementedError
+    std = torch.exp(log_std)
+    KLD = torch.sum(std + torch.square(mean) - 1 - log_std, dim=-1)/2
     return KLD
 
 
@@ -63,8 +63,12 @@ def elbo_to_bpd(elbo, img_shape):
     Outputs:
         bpd - The negative log likelihood in bits per dimension for the given image.
     """
-    bpd = None
-    raise NotImplementedError
+    norm = 1
+    for shape in img_shape[1::]:
+        norm *= shape
+
+    bpd = (elbo * np.log2(np.e))/norm
+    # bpd = (elbo * torch.log2(torch.full_like(elbo, np.e)))/norm
     return bpd
 
 

@@ -24,8 +24,8 @@ import argparse
 
 import numpy as np
 
-import matplotlib
-matplotlib.use('Agg')
+# import matplotlib
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 import torch
@@ -144,8 +144,8 @@ def train(config, seed=0):
     print('Final acc:', acc_history[-1])
     return loss_history, acc_history
 
-def generate_sequence(config, seed=0,
-                      model_path='output_dir/kant_30_final.pt', init_char='t'):
+def generate_sequence(config, seed=0, temp=0, seq_length=30,
+                      model_path='output_dir/kant_100_4.pt', init_char='t'):
 
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -174,27 +174,28 @@ def generate_sequence(config, seed=0,
     model.load_state_dict(torch.load(model_path, map_location=config.device))
     model.eval()
 
-    print(init_char)
-    # print(torch.Tensor([dataset._char_to_ix[init_char]]))
-    # char = dataset._char_to_ix[init_char]
+    # print(init_char)
     word_list = [dataset._char_to_ix[char] for char in init_char]
-    # sequence = torch.Tensor([dataset._char_to_ix[init_char]]).long().reshape(1,1)
-    # print(sequence)
     state = model.init_state()
-    # print(sequence.size())
 
-    for step in range(30):
+
+    for step in range(seq_length):
         last = torch.tensor([[word_list[step]]]).long().to(device)
-        print(last)
-        output, state = model.predict(last, state)
-        # print(state[0][0,0,0])
+        # print(last)
+        output, state = model.predict(last, state, temp=temp)
+        # print(output.squeeze())
         if step + 1 >= len(word_list):
-            word_list.append(torch.argmax(output).item())
-        # sequence = torch.cat((sequence, torch.argmax(output).reshape(1,1)))
-        # print(sequence.size())
+            if temp > 0:
+                word_list.append(torch.multinomial(output.squeeze(), 1).item())
+            else:
+                word_list.append(torch.argmax(output).item())
     
-    print(''.join([dataset._ix_to_char[ix] for ix in word_list]))
-    return word_list
+    # plt.hist(output.squeeze().numpy(), 100)
+    # plt.show()
+
+    
+    sequence = ''.join([dataset._ix_to_char[ix] for ix in word_list])
+    return sequence
 
 
 
@@ -270,10 +271,19 @@ if __name__ == "__main__":
     # If needed/wanted, feel free to add more arguments
 
     config = parser.parse_args()
+    f = open('output_dir/kant_seq.txt', 'a+')
 
     # Train the model
     if config.mode == 'train':
         loss, acc = train(config)
     # draw_plot(acc, loss, config.seq_length)
     if config.mode == 'predict':
-        output = generate_sequence(config, init_char='dial')
+        # for path in ['2', '3', '4']: #['6969', '14000', 'final']:
+        #    for char in ['t', 'p', 'a', 'c', 'r']: 
+        output = generate_sequence(
+            config, model_path=f'output_dir/kant_100_4.pt', 
+            seq_length=1000, init_char='the thing in itself', temp=6.66
+        )
+        # f.write(path + ' ' + char + ' ' + output + '\\newline' +'\n')
+        print(output)
+

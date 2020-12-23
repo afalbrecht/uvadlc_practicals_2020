@@ -74,13 +74,16 @@ class TextGenerationModel(nn.Module):
 
         return output
 
-    def predict(self, x, prev_state):
+    def predict(self, x, prev_state, temp=0):
         with torch.no_grad():
             # print(x)
             embed = self.embedding(x)
             output, new_state = self.lstm(embed, prev_state)
             output = self.fc(output)
-            output = self.logsoftmax(output)
+            if temp > 0:
+                output = output*temp
+            # output = self.logsoftmax(output)
+            output = nn.functional.softmax(output, dim=-1)
 
         return output, new_state
 

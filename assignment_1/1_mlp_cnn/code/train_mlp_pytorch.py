@@ -1,4 +1,4 @@
-"""
+ """
 This module implements training and evaluation of a multi-layer perceptron in PyTorch.
 You should fill in code into indicated sections.
 """

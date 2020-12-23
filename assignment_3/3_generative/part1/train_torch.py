@@ -70,11 +70,21 @@ class VAE(nn.Module):
         """
 
         # Hint: implement the empty functions in utils.py
+        
+        mean, log_std = self.encoder(imgs)
+        std = torch.exp(log_std)
+        print(torch.mean(mean), torch.std(mean))
+        # print(torch.mean(std), torch.std(std))
+        z = sample_reparameterize(mean, std)
+        output = self.decoder(z)
 
-        L_rec = None
-        L_reg = None
-        bpd = None
-        raise NotImplementedError
+        rec_loss = nn.BCEWithLogitsLoss(reduction='none')
+        L_rec = rec_loss(output, imgs).view(imgs.shape[0], -1).sum(dim=1)
+        # print(L_rec.size())
+        L_reg = KLD(mean, log_std)
+        NLL = L_rec + L_reg     # maybe mean
+        # print('NLL:', NLL.size())
+        bpd = elbo_to_bpd(NLL, imgs[0].size())
         return L_rec, L_reg, bpd
 
     @torch.no_grad()
@@ -89,9 +99,14 @@ class VAE(nn.Module):
                      between 0 and 1 from which we obtain "x_samples"
         """
 
-        x_mean = None
-        x_samples = None
-        raise NotImplementedError
+        z = torch.randn((batch_size, 20))
+        output = self.decoder(z)
+
+        x_mean = torch.sigmoid(output)
+        # x_samples = x_mean
+        # x_samples[x_samples<0.5] = 0
+        # x_samples[x_samples!=0] = 1
+        x_samples = torch.round(x_mean)
         return x_samples, x_mean
 
     @property
@@ -118,7 +133,9 @@ def sample_and_save(model, epoch, summary_writer, batch_size=64):
     # - Use the torchvision function "make_grid" to create a grid of multiple images
     # - Use the torchvision function "save_image" to save an image grid to disk
 
-    raise NotImplementedError
+    x_samples, x_mean = model.sample(batch_size)
+    grid = make_grid(x_samples)
+    save_image(grid, summary_writer.log_dir + f'/sampleepoch{epoch}.pdf')
 
 
 @torch.no_grad()
@@ -133,11 +150,21 @@ def test_vae(model, data_loader):
         average_rec_loss - Average reconstruction loss
         average_reg_loss - Average regularization loss
     """
+    model.eval()
 
-    average_bpd = None
-    average_rec_loss = None
-    average_reg_loss = None
-    raise NotImplementedError
+    reg_list, rec_list, bpd_list = [], [], []
+    # L_reg, L_rec, bpd = 0, 0, 0
+    i = 0
+    for batch, _ in data_loader:
+        batch.to(model.device)
+        i += 1
+        L_reg, L_rec, bpd = model(batch)
+        reg_list.append(torch.mean(L_reg).item()), rec_list.append(torch.mean(L_rec).item()), bpd_list.append(torch.mean(bpd).item())
+
+    average_bpd = np.mean(bpd_list)
+    average_rec_loss = np.mean(rec_list)
+    average_reg_loss = np.mean(reg_list)
+    print('\ntest:', average_bpd)
     return average_bpd, average_rec_loss, average_reg_loss
 
 
@@ -153,11 +180,27 @@ def train_vae(model, train_loader, optimizer):
         average_rec_loss - Average reconstruction loss
         average_reg_loss - Average regularization loss
     """
+    model.train()
 
-    average_bpd = None
-    average_rec_loss = None
-    average_reg_loss = None
-    raise NotImplementedError
+    reg_list, rec_list, bpd_list = [], [], []
+    # L_reg, L_rec, bpd = 0, 0, 0
+    i = 0
+    for batch, _ in train_loader:
+        # print(type(batch))
+        # print(batch.size())
+        batch.to(model.device)
+        i += 1
+        L_reg, L_rec, bpd = model(batch)
+        # print(L_reg, L_rec, bpd)
+        reg_list.append(torch.mean(L_reg).item()), rec_list.append(torch.mean(L_rec).item()), bpd_list.append(torch.mean(bpd).item())
+        optimizer.zero_grad()
+        torch.mean(bpd).backward()
+        optimizer.step()
+
+    average_bpd = np.mean(bpd_list)
+    average_rec_loss = np.mean(rec_list)
+    average_reg_loss = np.mean(reg_list)
+    print('\ntrain:', average_bpd)
     return average_bpd, average_rec_loss, average_reg_loss
 
 
@@ -202,6 +245,16 @@ def main(args):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     model = model.to(device)
 
+        # Sample from statedicts
+    if bool(args.sample):
+        model.load_state_dict(torch.load('output_dir/model_10.pt'))
+        model.eval()
+        # model.sample(1)
+        sample_and_save(model, 13, summary_writer, 8)
+
+    # if config.load_model == 'save':
+    # torch.save(model.state_dict(), f'output_dir/model_0.pt')
+
     # Create optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
@@ -232,9 +285,12 @@ def main(args):
         summary_writer.add_scalars(
             "Reconstruction Loss", {"train": train_rec_loss, "val": val_rec_loss}, epoch)
         summary_writer.add_scalars(
-            "Regularization Loss", {"train": train_reg_loss, "val": train_reg_loss}, epoch)
+            "Regularization Loss", {"train": train_reg_loss, "val": val_reg_loss}, epoch)
         summary_writer.add_scalars(
             "ELBO", {"train": train_rec_loss + train_reg_loss, "val": val_rec_loss + val_reg_loss}, epoch)
+        
+        if epoch == 10:
+            torch.save(model.state_dict(), f'output_dir/model_10.pt')
 
         if epoch % 5 == 0:
             sample_and_save(model, epoch, summary_writer, 64)
@@ -244,6 +300,8 @@ def main(args):
             best_val_bpd = epoch_val_bpd
             best_epoch_idx = epoch
             torch.save(model.state_dict(), os.path.join(checkpoint_dir, "epoch.pt"))
+    
+    torch.save(model.state_dict(), f'output_dir/model_80.pt')
 
     # Load best model for test
     print(f"Best epoch: {best_epoch_idx}. Load model for testing.")
@@ -300,6 +358,8 @@ if __name__ == '__main__':
     parser.add_argument('--progress_bar', action='store_true',
                         help=('Use a progress bar indicator for interactive experimentation. '
                               'Not to be used in conjuction with SLURM jobs'))
+    parser.add_argument('--sample', default='True', type=str,
+                        help='Flag for sampling, can be True or False')
 
     args = parser.parse_args()
 

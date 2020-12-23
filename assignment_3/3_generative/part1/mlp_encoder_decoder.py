@@ -18,6 +18,11 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+def init_weights(layer, std=0.0001):
+  if type(layer) == nn.Linear:
+    layer.weight.data.normal_(std=std)
+    layer.bias.data.fill_(0.0)
+
 
 class MLPEncoder(nn.Module):
 
@@ -36,7 +41,16 @@ class MLPEncoder(nn.Module):
         # For an intial architecture, you can use a sequence of linear layers and ReLU activations.
         # Feel free to experiment with the architecture yourself, but the one specified here is 
         # sufficient for the assignment.
-        raise NotImplementedError
+
+        self.z_dim = z_dim
+        self.encoder = nn.ModuleList()
+        for layer_size in hidden_dims:
+            self.encoder.append(nn.Linear(input_dim, layer_size))
+            self.encoder.append(nn.ReLU())
+            input_dim = layer_size
+        self.encoder.append(nn.Linear(input_dim, z_dim*2))
+
+        self.encoder.apply(init_weights)          # TODO: init_weights
 
     def forward(self, x):
         """
@@ -49,9 +63,15 @@ class MLPEncoder(nn.Module):
         """
 
         # Remark: Make sure to understand why we are predicting the log_std and not std
-        mean = None
-        log_std = None
-        raise NotImplementedError
+
+        img_size = x.size()[1] * x.size()[2] * x.size()[3]
+        x = x.view(-1, img_size)
+        for layer in self.encoder:
+            x = layer(x)
+        
+        mean = x[:, :self.z_dim]
+        log_std = x[:, self.z_dim:]
+
         return mean, log_std
 
 
@@ -69,11 +89,21 @@ class MLPDecoder(nn.Module):
         """
         super().__init__()
         self.output_shape = output_shape
+        output_shape = output_shape[1] * output_shape[2]
 
         # For an intial architecture, you can use a sequence of linear layers and ReLU activations.
         # Feel free to experiment with the architecture yourself, but the one specified here is 
         # sufficient for the assignment.
-        raise NotImplementedError
+        
+        input_dim = z_dim
+        self.decoder = nn.ModuleList()
+        for layer_size in hidden_dims:
+            self.decoder.append(nn.Linear(input_dim, layer_size))
+            self.decoder.append(nn.ReLU())
+            input_dim = layer_size
+        self.decoder.append(nn.Linear(input_dim, output_shape))
+
+        self.decoder.apply(init_weights) 
 
     def forward(self, z):
         """
@@ -85,9 +115,9 @@ class MLPDecoder(nn.Module):
                 Shape: [B,output_shape[0],output_shape[1],output_shape[2]]
         """
 
-        x = None
-        raise NotImplementedError
-        return x
+        for layer in self.decoder:
+            z = layer(z)
+        return z.view(-1, self.output_shape[0], self.output_shape[1], self.output_shape[2])
 
     @property
     def device(self):

@@ -1,7 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
+import torch.nn as nn
 
-print(2e4)
+tens = torch.tensor([[1], [2]]).float()
+
+print(nn.functional.softmax(tens*2, dim=0))
 
 # l1 = [1,2,3,4,5,6,7,8,9]
 # l2 = [2,3,4,5,6,7,8,9,10]

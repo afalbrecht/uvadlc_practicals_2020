@@ -18,6 +18,11 @@ import torch
 import torch.nn as nn
 import numpy as np
 
+def init_weights(layer, std=0.0001):
+  if type(layer) == nn.Linear:
+    layer.weight.data.normal_(std=std)
+    layer.bias.data.fill_(0.0)
+
 
 class GeneratorMLP(nn.Module):
 
@@ -34,11 +39,26 @@ class GeneratorMLP(nn.Module):
                            of the NN must be the product of the shape elements.
             dp_rate - Dropout probability to apply after every linear layer except the output.
         """
-        super().__init__()
+
         # You are allowed to experiment with the architecture and change the activation function, normalization, etc.
         # However, the default setup is sufficient to generate fine images and gain full points in the assignment.
         # The default setup is a sequence of Linear, Dropout, LeakyReLU (alpha=0.2)
-        raise NotImplementedError
+        super().__init__()
+
+        self.output_shape = output_shape
+        output_shape = output_shape[1] * output_shape[2]
+        input_dim = z_dim
+        self.z_dim = z_dim
+        self.generator = nn.ModuleList()
+        for layer_size in hidden_dims:
+            self.generator.append(nn.Linear(input_dim, layer_size))
+            self.generator.append(nn.Dropout(dp_rate))
+            self.generator.append(nn.LeakyReLU(0.2))
+            input_dim = layer_size
+        self.generator.append(nn.Linear(input_dim, output_shape))
+        self.generator.append(nn.Tanh())
+
+        self.generator.apply(init_weights)    
 
     def forward(self, z):
         """
@@ -47,8 +67,9 @@ class GeneratorMLP(nn.Module):
         Outputs:
             x - Generated image of shape [B,output_shape[0],output_shape[1],output_shape[2]]
         """
-        x = None
-        raise NotImplementedError
+        for layer in self.generator:
+            z = layer(z)
+        x = z.view(-1, *self.output_shape)
         return x
 
     @property
@@ -75,7 +96,17 @@ class DiscriminatorMLP(nn.Module):
         # You are allowed to experiment with the architecture and change the activation function, normalization, etc.
         # However, the default setup is sufficient to generate fine images and gain full points in the assignment.
         # The default setup is the same as the generator: a sequence of Linear, Dropout, LeakyReLU (alpha=0.2)
-        raise NotImplementedError
+        
+
+        self.discriminator = nn.ModuleList()
+        for layer_size in hidden_dims:
+            self.discriminator.append(nn.Linear(input_dims, layer_size))
+            self.discriminator.append(nn.Dropout(dp_rate))
+            self.discriminator.append(nn.LeakyReLU(0.2))
+            input_dims = layer_size
+        self.discriminator.append(nn.Linear(input_dims, 1))
+
+        self.discriminator.apply(init_weights)    
 
     def forward(self, x):
         """
@@ -86,6 +117,7 @@ class DiscriminatorMLP(nn.Module):
                     Note that this should be a logit output *without* a sigmoid applied on it.
                     Shape: [B,1]
         """
-        preds = None
-        raise NotImplementedError
-        return preds
+        x = torch.flatten(x, 1, -1)
+        for layer in self.discriminator:
+            x = layer(x)
+        return x
