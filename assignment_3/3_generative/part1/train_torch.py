@@ -73,7 +73,7 @@ class VAE(nn.Module):
         
         mean, log_std = self.encoder(imgs)
         std = torch.exp(log_std)
-        print(torch.mean(mean), torch.std(mean))
+        # print(torch.mean(mean), torch.std(mean))
         # print(torch.mean(std), torch.std(std))
         z = sample_reparameterize(mean, std)
         output = self.decoder(z)
@@ -99,7 +99,7 @@ class VAE(nn.Module):
                      between 0 and 1 from which we obtain "x_samples"
         """
 
-        z = torch.randn((batch_size, 20))
+        z = torch.randn((batch_size, self.z_dim))
         output = self.decoder(z)
 
         x_mean = torch.sigmoid(output)
@@ -164,7 +164,7 @@ def test_vae(model, data_loader):
     average_bpd = np.mean(bpd_list)
     average_rec_loss = np.mean(rec_list)
     average_reg_loss = np.mean(reg_list)
-    print('\ntest:', average_bpd)
+    # print('\ntest:', average_bpd)
     return average_bpd, average_rec_loss, average_reg_loss
 
 
@@ -244,13 +244,23 @@ def main(args):
                 lr=args.lr)
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     model = model.to(device)
+    # sample_and_save(model, 0, summary_writer, 64)
 
         # Sample from statedicts
-    if bool(args.sample):
-        model.load_state_dict(torch.load('output_dir/model_10.pt'))
-        model.eval()
-        # model.sample(1)
-        sample_and_save(model, 13, summary_writer, 8)
+    # if True: #bool(args.sample):
+    #     for epoch in [0, 10, 80]:
+    #         print(epoch)
+    #         model.load_state_dict(torch.load(f'output_dir/model_{epoch}.pt'))
+    #         model.eval()
+    #         # model.sample(1)
+    #         sample_and_save(model, epoch, summary_writer, 64)
+
+    model.load_state_dict(torch.load('output_dir/model_2_80.pt'))
+    model.eval()
+
+    img_grid = visualize_manifold(model.decoder)
+    save_image(img_grid, os.path.join(experiment_dir, 'vae_manifold.png'),
+               normalize=False)
 
     # if config.load_model == 'save':
     # torch.save(model.state_dict(), f'output_dir/model_0.pt')
@@ -259,7 +269,7 @@ def main(args):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
     # Sample image grid before training starts
-    sample_and_save(model, 0, summary_writer, 64)
+    # sample_and_save(model, 0, summary_writer, 64)
 
     # Tracking variables for finding best model
     best_val_bpd = float('inf')
@@ -289,8 +299,8 @@ def main(args):
         summary_writer.add_scalars(
             "ELBO", {"train": train_rec_loss + train_reg_loss, "val": val_rec_loss + val_reg_loss}, epoch)
         
-        if epoch == 10:
-            torch.save(model.state_dict(), f'output_dir/model_10.pt')
+        if epoch == 20:
+            torch.save(model.state_dict(), f'output_dir/model_2_10.pt')
 
         if epoch % 5 == 0:
             sample_and_save(model, epoch, summary_writer, 64)
@@ -301,7 +311,7 @@ def main(args):
             best_epoch_idx = epoch
             torch.save(model.state_dict(), os.path.join(checkpoint_dir, "epoch.pt"))
     
-    torch.save(model.state_dict(), f'output_dir/model_80.pt')
+    torch.save(model.state_dict(), f'output_dir/model_2_80.pt')
 
     # Load best model for test
     print(f"Best epoch: {best_epoch_idx}. Load model for testing.")

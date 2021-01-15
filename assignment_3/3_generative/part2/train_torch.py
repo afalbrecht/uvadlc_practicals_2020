@@ -115,7 +115,6 @@ class GAN(nn.Module):
         z = torch.randn((x_real.shape[0], self.generator.z_dim)).to(self.generator.device)
         
         imgs = self.generator(z)
-        # imgs = self.sample(x_real.shape[0])
         d_out = self.discriminator(imgs)
         # Applied label smoothing as per https://github.com/soumith/ganhacks
         smooth_labels = torch.randint_like(d_out, low=7, high=12)/10     
@@ -219,10 +218,9 @@ def interpolate_and_save(model, epoch, summary_writer, batch_size=64,
     # - Use the torchvision function "make_grid" to create a grid of multiple images
     # - Use the torchvision function "save_image" to save an image grid to disk
     
-    # You also have to implement this function in a later question of the assignemnt. 
-    # By default it is skipped to allow you to test your other code so far. 
-    print("WARNING: Interpolation function has not been implemented yet.")
-    pass
+    imgs = model.sample(batch_size)
+    grid = make_grid(imgs)
+    save_image(grid, summary_writer.log_dir + f'/sample_{epoch}.pdf')    
 
 
 def train_gan(model, train_loader,
@@ -336,7 +334,7 @@ def main(args):
         # Logging images
         if (epoch + 1) % 10 == 0:
             generate_and_save(model, epoch+1, summary_writer)
-            interpolate_and_save(model, epoch+1, summary_writer)
+            # interpolate_and_save(model, epoch+1, summary_writer)
 
         # Saving last model (only every 10 epochs to reduce IO traffic)
         # As we do not have a validation step, we cannot determine the "best"
